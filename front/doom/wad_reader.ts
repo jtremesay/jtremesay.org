@@ -1,21 +1,29 @@
 import { WAD, Level, Sector, Vertex, SideDef, LineDef } from "./WAD"
 
-function read_string(data: ArrayBuffer, index: number, length: number): string {
-    return String.fromCharCode(...new Uint8Array(data.slice(index, index + length)).filter((v) => v != 0))
+function read_string(data: ArrayBuffer, offset: number, length: number): string {
+    return String.fromCharCode(...new Uint8Array(data.slice(offset, offset + length)).filter((v) => v != 0))
 }
 
-function read_uint16(data: ArrayBuffer, index: number): number {
-    return new Uint16Array(data.slice(index, index + 2))[0]
+function read_uint16(data: ArrayBuffer, offset: number): number {
+    return new Uint16Array(data.slice(offset, offset + 2))[0]
 }
 
-function read_int16(data: ArrayBuffer, index: number): number {
-    return new Int16Array(data.slice(index, index + 2))[0]
+function read_int16(data: ArrayBuffer, offset: number): number {
+    return new Int16Array(data.slice(offset, offset + 2))[0]
 }
 
-function read_uint32(data: ArrayBuffer, index: number): number {
-    return new Uint32Array(data.slice(index, index + 4))[0]
+function read_uint32(data: ArrayBuffer, offset: number): number {
+    return new Uint32Array(data.slice(offset, offset + 4))[0]
 }
 
+function read_linedef(data: ArrayBuffer, offset: number): LineDef {
+    return new LineDef(
+        read_uint16(data, offset),
+        read_uint16(data, offset + 2),
+        read_uint16(data, offset + 10),
+        read_uint16(data, offset + 12),
+    )
+}
 
 export function read_wad(data: ArrayBuffer): WAD {
     let wad = new WAD()
@@ -34,12 +42,7 @@ export function read_wad(data: ArrayBuffer): WAD {
                 let linedefs_count = lump_size / 14
                 for (let linedef_i = 0; linedef_i < linedefs_count; ++linedef_i) {
                     let linedef_offset = lump_ptr + linedef_i * 14
-                    level.linedefs.push(new LineDef(
-                        read_uint16(data, linedef_offset),
-                        read_uint16(data, linedef_offset + 2),
-                        read_uint16(data, linedef_offset + 10),
-                        read_uint16(data, linedef_offset + 12),
-                    ))
+                    level.linedefs.push(read_linedef(data, linedef_offset))
                 }
             } else if (lump_name == "SIDEDEFS") {
                 let sidedefs_count = lump_size / 30
