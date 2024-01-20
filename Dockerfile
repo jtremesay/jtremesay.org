@@ -37,8 +37,7 @@ COPY front/ front/
 
 # Build
 RUN npm run build \
-    && python manage.py collectstatic --no-input \
-    && python manage.py gensite
+    && ./manage.py distill-local --collectstatic --force dist
 
 FROM nginx:mainline
 COPY --from=site /code/dist/ /usr/share/nginx/html/

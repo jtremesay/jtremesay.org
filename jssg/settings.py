@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "django_distill",
     "django_vite_plugin",
     "jssg",
 ]
@@ -126,7 +127,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 DIST_DIR = BASE_DIR / "dist"
-STATIC_ROOT = DIST_DIR / "static"
+STATIC_ROOT = BASE_DIR / "static"
 STATICFILES_DIRS = [JSSG_STATIC_DIR]
 
 # Default primary key field type

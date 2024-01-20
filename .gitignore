@@ -13,3 +13,4 @@ __pycache__/
 # Django
 /.hotfile
 /db.sqlite3
+/static
