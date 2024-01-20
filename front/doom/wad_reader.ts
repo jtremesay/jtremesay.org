@@ -1,36 +1,23 @@
 import { WAD, Level, Sector, Vertex, SideDef, LineDef } from "./WAD"
 
-function read_string(data: Uint8Array, index: number, length: number): string {
-    let str = ""
-    for (let val of data.slice(index, index + length)) {
-        if (val == 0) {
-            break
-        }
-        str += String.fromCharCode(val)
-    }
-
-    return str
+function read_string(data: ArrayBuffer, index: number, length: number): string {
+    return String.fromCharCode(...new Uint8Array(data.slice(index, index + length)).filter((v) => v != 0))
 }
 
-function read_uint16(data: Uint8Array, index: number): number {
-    return data[index] | (data[index + 1] << 8)
+function read_uint16(data: ArrayBuffer, index: number): number {
+    return new Uint16Array(data.slice(index, index + 2))[0]
 }
 
-function read_int16(data: Uint8Array, index: number): number {
-    let val = read_uint16(data, index)
-    if (val & 0x8000) {
-        return -((~val & 0xffff) + 1)
-    } else {
-        return val
-    }
+function read_int16(data: ArrayBuffer, index: number): number {
+    return new Int16Array(data.slice(index, index + 2))[0]
 }
 
-function read_uint32(data: Uint8Array, index: number): number {
-    return data[index] | (data[index + 1] << 8) | (data[index + 2] << 16) | (data[index + 3] << 24)
+function read_uint32(data: ArrayBuffer, index: number): number {
+    return new Uint32Array(data.slice(index, index + 4))[0]
 }
 
 
-export function read_wad(data: Uint8Array): WAD {
+export function read_wad(data: ArrayBuffer): WAD {
     let wad = new WAD()
     let lumps_count = read_uint32(data, 4)
     let lumps_ptr = read_uint32(data, 8)

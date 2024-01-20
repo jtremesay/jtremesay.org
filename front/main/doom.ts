@@ -88,13 +88,12 @@ function main() {
     let $progress = $app.append("pre")
     axios.get(url, {
         responseType: "arraybuffer",
-        transformResponse: (data) => new Uint8Array(data),
         onDownloadProgress: (event) => {
             $progress.text(`Downloading ${url}... ${event.progress! * 100}%`)
-            console.log(event)
         }
     }).then((response) => {
         let wad = read_wad(response.data)
+        console.log(wad)
         doom_main($app.node()! as Element, wad)
     })
 }
