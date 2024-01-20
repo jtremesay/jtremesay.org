@@ -11,6 +11,7 @@ slug: index
 - [Calculer Pi au casino]({% url 'page' 'pi-monte-carlo' %})
 - [Scada player]({% url 'page' 'scadaplayer' %}) : un outil pour visualiser les données issues d'une éolienne
 - [Crankshaft]({% url 'page' 'crankshaft' %}) : Simulation de systèmes vilebrequin / bielle / piston
+- [Doom]({% url 'page' 'doom' %}) : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
 
 ## Projets
 
