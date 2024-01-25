@@ -2,16 +2,17 @@ import { WAD } from "./types"
 import * as THREE from "three"
 
 export class DoomEngine {
+    should_run: boolean = true
     wad: WAD
     scene: THREE.Scene
     camera: THREE.Camera
     renderer: THREE.Renderer
 
-    constructor(wad: WAD, renderer: THREE.Renderer) {
+    constructor(wad: WAD, level_i: number, renderer: THREE.Renderer) {
         this.wad = wad
         this.renderer = renderer
 
-        let level = this.wad.levels[0]
+        let level = this.wad.levels[level_i]
         this.scene = new THREE.Scene()
 
         let left = Infinity
@@ -75,7 +76,14 @@ export class DoomEngine {
     }
 
     run() {
+        if (!this.should_run) {
+            return
+        }
         this.frame()
         window.requestAnimationFrame(this.run.bind(this))
+    }
+
+    stop() {
+        this.should_run = false
     }
 }
