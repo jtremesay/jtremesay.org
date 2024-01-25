@@ -25,7 +25,7 @@ class DoomEngine {
             if (vertex.x < left) {
                 left = vertex.x
             }
-            if (vertex.x > left) {
+            if (vertex.x > right) {
                 right = vertex.x
             }
             if (vertex.y < bottom) {
@@ -35,22 +35,23 @@ class DoomEngine {
                 top = vertex.y
             }
         } console.log(left, right, top, bottom)
-        this.camera = new THREE.OrthographicCamera(left, right, top, bottom)
+
+        let width = right - left
+        let height = top - bottom
+        this.camera = new THREE.OrthographicCamera(left - width * 0.05, right + width * 0.05, top + height * 0.05, bottom - height * 0.05)
 
         for (let ss of level.sub_sectors) {
             let shape = new THREE.Shape()
             for (let i = 0; i < ss.segments_count; ++i) {
                 let seg = level.segments[ss.segments_i + i]
-                if (i == 0) {
-                    let vertex = level.vertexes[seg.start_vertex]
-                    shape.moveTo(vertex.x, vertex.y)
-                }
-                let vertex = level.vertexes[seg.end_vertex]
-                shape.lineTo(vertex.x, vertex.y)
+                let svertex = level.vertexes[seg.start_vertex]
+                shape.moveTo(svertex.x, svertex.y)
+                let evertex = level.vertexes[seg.end_vertex]
+                shape.lineTo(evertex.x, evertex.y)
             }
             let geometry = new THREE.ShapeGeometry(shape)
             let material = new THREE.MeshBasicMaterial({
-                color: (Math.random() * 0xffffff << 8 | 0xff)
+                color: (Math.random() * 0xff << 24) | (Math.random() * 0xff << 16) | (Math.random() * 0xff << 8) | 0xff,
             })
             let mesh = new THREE.Mesh(geometry, material)
             this.scene.add(mesh)
