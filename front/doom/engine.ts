@@ -13,6 +13,7 @@ export class DoomEngine {
         this.renderer = renderer
 
         let level = this.wad.levels[level_i]
+        console.log(level)
         this.scene = new THREE.Scene()
 
         let left = Infinity
@@ -54,12 +55,6 @@ export class DoomEngine {
             let mesh = new THREE.Mesh(geometry, material)
             this.scene.add(mesh)
         }
-
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        this.scene.add(cube);
-
         this.camera.position.z = 5;
     }
 

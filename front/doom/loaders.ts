@@ -1,7 +1,27 @@
 import * as THREE from "three"
 import { Lump } from "./lumps"
 import { read_int16, read_uint16 } from "./readers"
-import { Level, LineDef, Segment, SideDef, SubSector, WAD } from "./types"
+import { Level, LineDef, Node, Segment, SideDef, SubSector, WAD } from "./types"
+
+function read_vertex(data: ArrayBuffer, offset: number): THREE.Vector2 {
+    return new THREE.Vector2(
+        read_int16(data, offset) / 32,
+        read_int16(data, offset + 2) / 32,
+    )
+}
+
+function read_bb(data: ArrayBuffer, offset: number): THREE.Box2 {
+    return new THREE.Box2(
+        new THREE.Vector2(
+            read_int16(data, offset + 4),
+            read_int16(data, offset + 2),
+        ),
+        new THREE.Vector2(
+            read_int16(data, offset + 6),
+            read_int16(data, offset),
+        )
+    )
+}
 
 function load_linedef(level: Level, lump: Lump, i: number): void {
     let offset = i * 14
@@ -38,10 +58,7 @@ function load_sidedefs(level: Level, lump: Lump): void {
 
 function load_vertex(level: Level, lump: Lump, i: number): void {
     let offset = i * 4
-    level.vertexes.push(new THREE.Vector2(
-        read_int16(lump.data, offset) / 32,
-        read_int16(lump.data, offset + 2) / 32,
-    ))
+    level.vertexes.push(read_vertex(lump.data, offset))
 }
 
 function load_vertexes(level: Level, lump: Lump): void {
@@ -82,6 +99,27 @@ function load_sub_sectors(level: Level, lump: Lump): void {
     let count = lump.data.byteLength / 4
     for (let i = 0; i < count; ++i) {
         load_sub_sector(level, lump, i)
+    }
+}
+
+
+function load_node(level: Level, lump: Lump, i: number): void {
+    let offset = i * 28
+    level.nodes.push(new Node(
+        level,
+        read_vertex(lump.data, offset),
+        read_vertex(lump.data, offset + 4),
+        read_bb(lump.data, offset + 8),
+        read_bb(lump.data, offset + 16),
+        read_int16(lump.data, offset + 24),
+        read_int16(lump.data, offset + 26),
+    ))
+}
+
+function load_nodes(level: Level, lump: Lump): void {
+    let count = lump.data.byteLength / 28
+    for (let i = 0; i < count; ++i) {
+        load_node(level, lump, i)
     }
 }
 
@@ -143,6 +181,7 @@ function load_level(lumps: Lump[], i: number): { level: Level, i: number } {
     if (lump.name != "NODES") {
         throw new Error(`Expected lump NODES, found ${lump.name}`)
     }
+    load_nodes(level, lump)
     ++i
 
     // Sectors

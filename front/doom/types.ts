@@ -103,6 +103,43 @@ export class SubSector {
 }
 
 export class Node {
+    _level: Level
+    start: THREE.Vector2
+    rel_end: THREE.Vector2
+    left_bb: THREE.Box2
+    right_bb: THREE.Box2
+    _left_i: number
+    _right_i: number
+
+    constructor(level: Level, start: THREE.Vector2, rel_end: THREE.Vector2, left_bb: THREE.Box2, right_bb: THREE.Box2, left_i: number, right_i: number) {
+        this._level = level
+        this.start = start
+        this.rel_end = rel_end
+        this.left_bb = left_bb
+        this.right_bb = right_bb
+        this._left_i = left_i
+        this._right_i = right_i
+    }
+
+    get end(): THREE.Vector2 {
+        return this.start.add(this.rel_end)
+    }
+
+    get left(): Node | SubSector {
+        if (this._left_i & 0x8000) {
+            return this._level.sub_sectors[this._left_i & 0x7fff]
+        } else {
+            return this._level.nodes[this._left_i]
+        }
+    }
+
+    get right(): Node | SubSector {
+        if (this._right_i & 0x8000) {
+            return this._level.sub_sectors[this._right_i & 0x7fff]
+        } else {
+            return this._level.nodes[this._right_i]
+        }
+    }
 }
 
 
@@ -124,6 +161,7 @@ export class Level {
     sidedefs: SideDef[] = []
     segments: Segment[] = []
     sub_sectors: SubSector[] = []
+    nodes: Node[] = []
     sectors: Sector[] = []
 
     constructor(name: string) {
