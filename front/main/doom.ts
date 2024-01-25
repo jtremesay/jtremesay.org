@@ -4,7 +4,7 @@ import { load_wad } from '../doom/loaders';
 import { read_lumps } from '../doom/lumps';
 
 function main() {
-    let $app = d3.select(".app")
+    let $app = d3.select(".doom")
     let url = $app.attr("data-wad-url")
     let $progress = $app.append("pre")
 
