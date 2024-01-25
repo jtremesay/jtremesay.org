@@ -1,4 +1,3 @@
-
 export class Vertex {
     x: number
     y: number
@@ -31,6 +30,30 @@ export class SideDef {
     }
 }
 
+export class Segment {
+    start_vertex: number
+    end_vertex: number
+    linedef: number
+    offset: number
+
+    constructor(start_vertex: number, end_vertex: number, linedef: number, offset: number) {
+        this.start_vertex = start_vertex
+        this.end_vertex = end_vertex
+        this.linedef = linedef
+        this.offset = offset
+    }
+}
+
+export class SubSector {
+    segments_count: number
+    segments_i: number
+
+    constructor(segments_count: number, segments_i: number) {
+        this.segments_count = segments_count
+        this.segments_i = segments_i
+    }
+}
+
 export class Sector {
     floor_height: number
     ceil_height: number
@@ -43,24 +66,21 @@ export class Sector {
 
 export class Level {
     name: string
-    vertexes: Vertex[]
-    linedefs: LineDef[]
-    sidedefs: SideDef[]
-    sectors: Sector[]
+    vertexes: Vertex[] = []
+    linedefs: LineDef[] = []
+    sidedefs: SideDef[] = []
+    segments: Segment[] = []
+    sub_sectors: SubSector[] = []
+    sectors: Sector[] = []
 
     constructor(name: string) {
         this.name = name
-        this.vertexes = []
-        this.linedefs = []
-        this.sidedefs = []
-        this.sectors = []
     }
 }
 
 export class WAD {
-    levels: Level[]
+    levels: Level[] = []
 
     constructor() {
-        this.levels = []
     }
 }
