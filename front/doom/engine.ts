@@ -1,5 +1,35 @@
-import { WAD } from "./types"
+import { WAD, Node, SubSector } from "./types"
 import * as THREE from "three"
+
+function visit_subsector(ss: SubSector, scene: THREE.Scene) {
+    let shape = new THREE.Shape()
+
+    for (let seg of ss.segments()) {
+        let svertex = seg.start
+        shape.moveTo(svertex.x, svertex.y)
+        let evertex = seg.end
+        shape.lineTo(evertex.x, evertex.y)
+    }
+    let geometry = new THREE.ShapeGeometry(shape)
+    let material = new THREE.MeshBasicMaterial({
+        color: (Math.random() * 0xff << 16) | (Math.random() * 0xff << 8) | 0xff,
+    })
+    let mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+}
+
+function visit_node(node: Node, scene: THREE.Scene) {
+    visit_tree(node.left, scene)
+    visit_tree(node.right, scene)
+}
+
+function visit_tree(node: Node | SubSector, scene: THREE.Scene) {
+    if (node instanceof SubSector) {
+        visit_subsector(node, scene)
+    } else {
+        visit_node(node, scene)
+    }
+}
 
 export class DoomEngine {
     should_run: boolean = true
@@ -16,45 +46,13 @@ export class DoomEngine {
         console.log(level)
         this.scene = new THREE.Scene()
 
-        let left = Infinity
-        let right = -Infinity
-        let bottom = Infinity
-        let top = -Infinity
-        for (let vertex of level.vertexes) {
-            if (vertex.x < left) {
-                left = vertex.x
-            }
-            if (vertex.x > right) {
-                right = vertex.x
-            }
-            if (vertex.y < bottom) {
-                bottom = vertex.y
-            }
-            if (vertex.y > top) {
-                top = vertex.y
-            }
-        }
+        let bb = new THREE.Box2()
+        level.vertexes.map((v) => bb.expandByPoint(v))
+        bb.expandByVector(bb.getSize(new THREE.Vector2()).multiplyScalar(0.05))
 
-        let width = right - left
-        let height = top - bottom
-        this.camera = new THREE.OrthographicCamera(left - width * 0.05, right + width * 0.05, top + height * 0.05, bottom - height * 0.05)
+        this.camera = new THREE.OrthographicCamera(bb.min.x, bb.max.x, bb.max.y, bb.min.y)
 
-        for (let ss of level.sub_sectors) {
-            let shape = new THREE.Shape()
-
-            for (let seg of ss.segments()) {
-                let svertex = seg.start
-                shape.moveTo(svertex.x, svertex.y)
-                let evertex = seg.end
-                shape.lineTo(evertex.x, evertex.y)
-            }
-            let geometry = new THREE.ShapeGeometry(shape)
-            let material = new THREE.MeshBasicMaterial({
-                color: (Math.random() * 0xff << 24) | (Math.random() * 0xff << 16) | (Math.random() * 0xff << 8) | 0xff,
-            })
-            let mesh = new THREE.Mesh(geometry, material)
-            this.scene.add(mesh)
-        }
+        visit_tree(level.nodes[level.nodes.length - 1], this.scene)
         this.camera.position.z = 5;
     }
 
