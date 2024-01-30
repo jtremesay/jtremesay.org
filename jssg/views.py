@@ -26,7 +26,7 @@ from jssg.models import Page, Post
 
 
 class PostFeedsView(Feed):
-    title = "MY WEBSITE - last articles"
+    title = "jtremesay.org - last articles"
     link = ""
     feed_type = Atom1Feed
 
