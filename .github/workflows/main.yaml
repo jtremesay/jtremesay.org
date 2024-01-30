@@ -28,7 +28,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=registry,ref=killruana/jtremesay.org:buildcache
 
