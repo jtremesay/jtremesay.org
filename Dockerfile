@@ -14,17 +14,21 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-FROM python:3.12 AS site
+FROM ubuntu:noble AS site
 
 # Update packages and install needed stuff
 RUN apt-get update \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get install -y --no-install-recommends npm python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
-RUN pip install -U pip setuptools wheel
+
+WORKDIR /code
+
+# Create venv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install python & node deps
-WORKDIR /code
 COPY requirements.txt package.json package-lock.json ./
 RUN pip install -Ur requirements.txt \
     && npm install
@@ -39,5 +43,5 @@ COPY front/ front/
 RUN npm run build \
     && ./manage.py distill-local --collectstatic --force dist
 
-FROM nginx:mainline
+FROM nginx:mainline-alpine
 COPY --from=site /code/dist/ /usr/share/nginx/html/
