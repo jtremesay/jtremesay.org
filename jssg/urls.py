@@ -12,17 +12,22 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
+from collections.abc import Iterable
+from typing import Any
+
 from django_distill import distill_path
 
 from jssg import views
 from jssg.models import Page, Post
 
 
-def get_pages():
+def get_pages() -> Iterable[dict[str, Any]]:
+    """Get available pages."""
     return ({"slug": p.slug} for p in Page.load_glob())
 
 
 def get_posts():
+    """Get available posts."""
     return ({"slug": p.slug} for p in Post.load_glob())
 
 
