@@ -27,7 +27,7 @@ from jssg.models import Page, Post
 
 class PostFeedsView(Feed):
     title = "jtremesay.org - last articles"
-    link = ""
+    link = "https://jtremesay.org/atom.xml"
     feed_type = Atom1Feed
 
     def items(self) -> list[Post]:
@@ -40,7 +40,7 @@ class PostFeedsView(Feed):
         return item.content_md
 
     def item_link(self, post: Post) -> str:
-        return reverse("post", args=(post.slug,))
+        return "https://jtremesay.org/" + reverse("post", args=(post.slug,))
 
     def item_pubdate(self, post: Post) -> str:
         return post.timestamp
