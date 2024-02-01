@@ -74,14 +74,18 @@ export class Segment {
     _level: Level
     _start_i: number
     _end_i: number
+    angle: number
     _linedef_i: number
+    direction: boolean
     offset: number
 
-    constructor(level: Level, start_i: number, end_i: number, linedef_i: number, offset: number) {
+    constructor(level: Level, start_i: number, end_i: number, angle: number, linedef_i: number, direction: boolean, offset: number) {
         this._level = level
         this._start_i = start_i
         this._end_i = end_i
+        this.angle = angle
         this._linedef_i = linedef_i
+        this.direction = direction
         this.offset = offset
     }
 

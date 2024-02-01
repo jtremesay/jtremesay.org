@@ -28,6 +28,7 @@ from jssg.models import Page, Post
 class PostFeedsView(Feed):
     title = "jtremesay.org - last articles"
     link = "https://jtremesay.org/atom.xml"
+    feed_link = "https://jtremesay.org/atom.xml"
     feed_type = Atom1Feed
 
     def items(self) -> list[Post]:

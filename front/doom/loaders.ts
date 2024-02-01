@@ -23,8 +23,8 @@ import { Level, LineDef, Node, Segment, SideDef, SubSector, WAD } from "./types"
 
 function read_vertex(data: ArrayBuffer, offset: number): THREE.Vector2 {
     return new THREE.Vector2(
-        read_int16(data, offset) / 32,
-        read_int16(data, offset + 2) / 32,
+        read_int16(data, offset),
+        read_int16(data, offset + 2),
     )
 }
 
@@ -92,7 +92,9 @@ function load_segment(level: Level, lump: Lump, i: number): void {
         level,
         read_int16(lump.data, offset),
         read_int16(lump.data, offset + 2),
+        read_int16(lump.data, offset + 4),
         read_int16(lump.data, offset + 6),
+        read_int16(lump.data, offset + 8) == 1,
         read_int16(lump.data, offset + 10),
     ))
 }

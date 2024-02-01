@@ -19,7 +19,7 @@
 import { WAD, Node, SubSector } from "./types"
 import * as THREE from "three"
 
-function visit_subsector(ss: SubSector, scene: THREE.Scene) {
+function visit_subsector(ss: SubSector, subsectors: THREE.Object3D) {
     let shape = new THREE.Shape()
 
     for (let seg of ss.segments()) {
@@ -28,24 +28,39 @@ function visit_subsector(ss: SubSector, scene: THREE.Scene) {
         let evertex = seg.end
         shape.lineTo(evertex.x, evertex.y)
     }
-    let geometry = new THREE.ShapeGeometry(shape)
-    let material = new THREE.MeshBasicMaterial({
+
+    subsectors.add(new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({
         color: (Math.random() * 0xff << 16) | (Math.random() * 0xff << 8) | 0xff,
-    })
-    let mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
+    })))
 }
 
-function visit_node(node: Node, scene: THREE.Scene) {
-    visit_tree(node.left, scene)
-    visit_tree(node.right, scene)
+function add_bb(bb: THREE.Box2, bboxes: THREE.Object3D, color: number) {
+    let shape = new THREE.Shape()
+    shape.moveTo(bb.min.x, bb.min.y)
+    shape.lineTo(bb.min.x, bb.max.y)
+    shape.lineTo(bb.max.x, bb.max.y)
+    shape.lineTo(bb.max.x, bb.min.y)
+    shape.lineTo(bb.min.x, bb.min.y)
+
+    //Lines
+    bboxes.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(shape.getPoints()),
+        new THREE.LineBasicMaterial({ color: color })
+    ))
 }
 
-function visit_tree(node: Node | SubSector, scene: THREE.Scene) {
+function visit_node(node: Node, bboxes: THREE.Object3D, subsectors: THREE.Object3D) {
+    visit_tree(node.left, bboxes, subsectors)
+    visit_tree(node.right, bboxes, subsectors)
+    add_bb(node.left_bb, bboxes, THREE.Color.NAMES.green)
+    add_bb(node.right_bb, bboxes, THREE.Color.NAMES.blue)
+}
+
+function visit_tree(node: Node | SubSector, bboxes: THREE.Object3D, subsectors: THREE.Object3D) {
     if (node instanceof SubSector) {
-        visit_subsector(node, scene)
+        visit_subsector(node, subsectors)
     } else {
-        visit_node(node, scene)
+        visit_node(node, bboxes, subsectors)
     }
 }
 
@@ -55,6 +70,9 @@ export class DoomEngine {
     scene: THREE.Scene
     camera: THREE.Camera
     renderer: THREE.Renderer
+    linedefs: THREE.Object3D
+    bboxes: THREE.Object3D
+    subsectors: THREE.Object3D
 
     constructor(wad: WAD, level_i: number, renderer: THREE.Renderer) {
         this.wad = wad
@@ -70,8 +88,34 @@ export class DoomEngine {
 
         this.camera = new THREE.OrthographicCamera(bb.min.x, bb.max.x, bb.max.y, bb.min.y)
 
-        visit_tree(level.nodes[level.nodes.length - 1], this.scene)
-        this.camera.position.z = 5;
+        // BBoxes & subsectors
+        this.bboxes = new THREE.Object3D()
+        this.subsectors = new THREE.Object3D()
+        visit_tree(level.nodes[level.nodes.length - 1], this.bboxes, this.subsectors)
+        this.scene.add(this.bboxes)
+        this.scene.add(this.subsectors)
+
+        // Linedefs
+        this.linedefs = new THREE.Object3D()
+        this.scene.add(this.linedefs)
+        for (let linedef of level.linedefs) {
+            let shape = new THREE.Shape()
+            shape.moveTo(linedef.start.x, linedef.start.y)
+            shape.lineTo(linedef.end.x, linedef.end.y)
+
+            //Lines
+            this.linedefs.add(new THREE.Line(
+                new THREE.BufferGeometry().setFromPoints(shape.getPoints()),
+                new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.red })
+            ))
+        }
+        this.camera.position.z = 1;
+
+        return
+
+
+
+
     }
 
     draw() {
