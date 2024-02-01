@@ -110,12 +110,6 @@ export class DoomEngine {
             ))
         }
         this.camera.position.z = 1;
-
-        return
-
-
-
-
     }
 
     draw() {
