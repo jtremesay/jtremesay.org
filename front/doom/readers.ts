@@ -142,7 +142,7 @@ function read_sub_sectors(data: ArrayBuffer, segments: Segment[]): SubSector[] {
     return [...Array(count)].map((_, i) => read_sub_sector(data, segments, i * size))
 }
 
-function read_node(data: ArrayBuffer, sub_sectors: SubSector[], offset: number = 0, deep: number = 0): Node {
+function read_node(data: ArrayBuffer, sub_sectors: SubSector[], offset: number = 0): Node {
     let size = 28
     let left_i = read_int16(data, offset + 24)
     let right_i = read_int16(data, offset + 26)
@@ -152,8 +152,8 @@ function read_node(data: ArrayBuffer, sub_sectors: SubSector[], offset: number =
         read_vector2(data, offset + 4),
         read_box2(data, offset + 8),
         read_box2(data, offset + 16),
-        left_i & 0x8000 ? sub_sectors[left_i & 0x7fff] : read_node(data, sub_sectors, left_i * size, deep + 1),
-        right_i & 0x8000 ? sub_sectors[right_i & 0x7fff] : read_node(data, sub_sectors, right_i * size, deep + 1),
+        left_i & 0x8000 ? sub_sectors[left_i & 0x7fff] : read_node(data, sub_sectors, left_i * size),
+        right_i & 0x8000 ? sub_sectors[right_i & 0x7fff] : read_node(data, sub_sectors, right_i * size),
     )
 }
 
@@ -184,7 +184,6 @@ function read_level(lumps: Lump[], i: number): Level {
     // Level
     let lump = lumps[i]
     let level_name = lump.name
-    console.log(level_name)
 
     // Things
     lump = lumps[i + 1]
