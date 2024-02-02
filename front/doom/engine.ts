@@ -76,8 +76,6 @@ function generate_sub_sectors(node: Node | SubSector): THREE.Object3D {
     return group
 }
 
-
-
 function generate_bboxes(node: Node): THREE.Object3D {
     let group = new THREE.Group()
     group.add(generate_bbox(node.left_bb, THREE.Color.NAMES.green))
@@ -108,24 +106,17 @@ function generate_line_defs(line_defs: LineDef[]): THREE.Object3D {
 
 function generate_partition(node: Node): THREE.Object3D {
     let group = new THREE.Group()
-    {
-        let intersect = new THREE.Box2().union(node.left_bb).intersect(node.right_bb)
+    let intersect = new THREE.Box2().union(node.left_bb).intersect(node.right_bb)
 
-        if (node.rel_end.x == 0) {
-            group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.blue))
-        } else if (node.rel_end.y == 0) {
-            group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.red))
-        } else {
-            group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.magenta))
-            group.add(generate_line(new THREE.Vector2(intersect.min.x, intersect.max.y), new THREE.Vector2(intersect.max.x, intersect.min.y), THREE.Color.NAMES.cyan))
-        }
-
-
+    if (node.rel_end.x == 0) {
+        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.blue))
+    } else if (node.rel_end.y == 0) {
+        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.red))
+    } else if (false) {
+        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.magenta))
+        group.add(generate_line(new THREE.Vector2(intersect.min.x, intersect.max.y), new THREE.Vector2(intersect.max.x, intersect.min.y), THREE.Color.NAMES.cyan))
     }
-
-    {
-        group.add(generate_line(node.start, node.end, THREE.Color.NAMES.yellow))
-    }
+    group.add(generate_line(node.start, node.end, THREE.Color.NAMES.yellow))
 
     return group
 }
@@ -143,6 +134,27 @@ function generate_partition_lines(node: Node): THREE.Object3D {
     return group
 }
 
+function generate_segments(node: Node | SubSector): THREE.Object3D {
+    if (node instanceof SubSector) {
+        let shape = new THREE.Shape()
+        for (let seg of node.segments) {
+            let svertex = seg.start
+            shape.moveTo(svertex.x, svertex.y)
+            let evertex = seg.end
+            shape.lineTo(evertex.x, evertex.y)
+        }
+
+        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.purple }))
+    }
+
+    let group = new THREE.Group()
+    group.add(generate_segments(node.left))
+    group.add(generate_segments(node.right))
+
+    return group
+}
+
+
 export class DoomEngine {
     should_run: boolean = true
     wad: WAD
@@ -150,6 +162,7 @@ export class DoomEngine {
     camera: THREE.Camera
     renderer: THREE.Renderer
     line_defs: THREE.Object3D
+    segments: THREE.Object3D
     bboxes: THREE.Object3D
     sub_sectors: THREE.Object3D
     partition_lines: THREE.Object3D
@@ -178,6 +191,11 @@ export class DoomEngine {
         // Linedefs
         this.line_defs = generate_line_defs(level.line_defs)
         this.scene.add(this.line_defs)
+
+        // Segments
+        this.segments = generate_segments(level.root)
+        this.scene.add(this.segments)
+
 
         // Partition lines
         this.partition_lines = generate_partition_lines(level.root)

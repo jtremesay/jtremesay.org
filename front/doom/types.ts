@@ -96,6 +96,10 @@ export class SubSector {
     constructor(segments: Segment[]) {
         this.segments = segments
     }
+
+    get sector(): Sector {
+        return this.segments[0].side_def.sector
+    }
 }
 
 export class Node {
