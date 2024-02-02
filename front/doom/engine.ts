@@ -25,13 +25,18 @@ function generate_bbox(bb: THREE.Box2, color: number): THREE.Object3D {
     shape.lineTo(bb.min.x, bb.max.y)
     shape.lineTo(bb.max.x, bb.max.y)
     shape.lineTo(bb.max.x, bb.min.y)
-    shape.lineTo(bb.min.x, bb.min.y)
+    let group = new THREE.Group();
 
-    //Lines
-    return new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(shape.getPoints()),
-        new THREE.LineBasicMaterial({ color: color })
-    )
+    // flat shape
+    let mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: color, opacity: 0.2, transparent: true }))
+    mesh.position.set(0, 0, 0)
+    mesh.scale.set(1, 1, 1)
+    group.add(mesh)
+
+    shape.closePath()
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: color })));
+
+    return group
 }
 
 function generate_line(start: THREE.Vector2, end: THREE.Vector2, color: number): THREE.Object3D {
@@ -75,6 +80,8 @@ function generate_sub_sectors(node: Node | SubSector): THREE.Object3D {
 
 function generate_bboxes(node: Node): THREE.Object3D {
     let group = new THREE.Group()
+    group.add(generate_bbox(node.left_bb, THREE.Color.NAMES.green))
+    group.add(generate_bbox(node.right_bb, THREE.Color.NAMES.red))
     if (node.left instanceof Node) {
         group.add(generate_bboxes(node.left))
     }
@@ -83,8 +90,6 @@ function generate_bboxes(node: Node): THREE.Object3D {
         group.add(generate_bboxes(node.right))
     }
 
-    group.add(generate_bbox(node.left_bb, THREE.Color.NAMES.green))
-    group.add(generate_bbox(node.right_bb, THREE.Color.NAMES.red))
     return group
 }
 
@@ -167,6 +172,7 @@ export class DoomEngine {
 
         // BBoxes
         this.bboxes = generate_bboxes(level.root)
+        this.bboxes.position.z = - 1
         this.scene.add(this.bboxes)
 
         // Linedefs
