@@ -22,7 +22,7 @@ import * as THREE from "three"
 function visit_subsector(ss: SubSector, subsectors: THREE.Object3D) {
     let shape = new THREE.Shape()
 
-    for (let seg of ss.segments()) {
+    for (let seg of ss.segments) {
         let svertex = seg.start
         shape.moveTo(svertex.x, svertex.y)
         let evertex = seg.end
@@ -82,23 +82,20 @@ export class DoomEngine {
         console.log(level)
         this.scene = new THREE.Scene()
 
-        let bb = new THREE.Box2()
-        level.vertexes.map((v) => bb.expandByPoint(v))
-        bb.expandByVector(bb.getSize(new THREE.Vector2()).multiplyScalar(0.05))
-
+        let bb = level.root.left_bb.union(level.root.right_bb).expandByScalar(100)
         this.camera = new THREE.OrthographicCamera(bb.min.x, bb.max.x, bb.max.y, bb.min.y)
 
         // BBoxes & subsectors
         this.bboxes = new THREE.Object3D()
         this.subsectors = new THREE.Object3D()
-        visit_tree(level.nodes[level.nodes.length - 1], this.bboxes, this.subsectors)
+        visit_tree(level.root, this.bboxes, this.subsectors)
         this.scene.add(this.bboxes)
         this.scene.add(this.subsectors)
 
         // Linedefs
         this.linedefs = new THREE.Object3D()
         this.scene.add(this.linedefs)
-        for (let linedef of level.linedefs) {
+        for (let linedef of level.line_defs) {
             let shape = new THREE.Shape()
             shape.moveTo(linedef.start.x, linedef.start.y)
             shape.lineTo(linedef.end.x, linedef.end.y)
@@ -109,6 +106,9 @@ export class DoomEngine {
                 new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.red })
             ))
         }
+
+        // BLAAAAAA
+
         this.camera.position.z = 1;
     }
 

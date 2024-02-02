@@ -16,184 +16,149 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+export class Thing {
+    position: THREE.Vector2
+    angle: number
+    type: number
+    flags: number
+
+    constructor(position: THREE.Vector2, angle: number, type: number, flags: number) {
+        this.position = position
+        this.angle = angle
+        this.type = type
+        this.flags = flags
+    }
+}
+
 export class LineDef {
-    _level: Level
-    _start_i: number
-    _end_i: number
-    _front_i: number
-    _back_i: number
+    start: THREE.Vector2
+    end: THREE.Vector2
+    flags: number
+    type: number
+    tag: number
+    front: SideDef | null
+    back: SideDef | null
 
-    constructor(level: Level, start_i: number, end_i: number, front_i: number, back_i: number) {
-        this._level = level
-        this._start_i = start_i
-        this._end_i = end_i
-        this._front_i = front_i
-        this._back_i = back_i
-    }
-
-    get start(): THREE.Vector2 {
-        return this._level.vertexes[this._start_i]
-    }
-
-    get end(): THREE.Vector2 {
-        return this._level.vertexes[this._end_i]
-    }
-
-    get front(): SideDef | null {
-        if (this._front_i == 0xffff) {
-            return null
-        }
-
-        return this._level.sidedefs[this._front_i]
-    }
-
-    get back(): SideDef | null {
-        if (this._back_i == 0xffff) {
-            return null
-        }
-
-        return this._level.sidedefs[this._back_i]
+    constructor(start: THREE.Vector2, end: THREE.Vector2, flags: number, type: number, tag: number, front: SideDef | null, back: SideDef | null) {
+        this.start = start
+        this.end = end
+        this.flags = flags
+        this.type = type
+        this.tag = tag
+        this.front = front
+        this.back = back
     }
 }
 
 export class SideDef {
-    _level: Level
-    _sector_i: number
+    offset: THREE.Vector2
+    upper_tex: string
+    lower_tex: string
+    middle_tex: string
+    sector: Sector
 
-    constructor(level: Level, sector_i: number) {
-        this._level = level
-        this._sector_i = sector_i
-    }
-
-    get sector(): Sector {
-        return this._level.sectors[this._sector_i]
+    constructor(offset: THREE.Vector2, upper_tex: string, lower_tex: string, middle_tex: string, sector: Sector) {
+        this.offset = offset
+        this.upper_tex = upper_tex
+        this.lower_tex = lower_tex
+        this.middle_tex = middle_tex
+        this.sector = sector
     }
 }
 
 export class Segment {
-    _level: Level
-    _start_i: number
-    _end_i: number
+    start: THREE.Vector2
+    end: THREE.Vector2
     angle: number
-    _linedef_i: number
+    line_def: LineDef
     direction: boolean
     offset: number
 
-    constructor(level: Level, start_i: number, end_i: number, angle: number, linedef_i: number, direction: boolean, offset: number) {
-        this._level = level
-        this._start_i = start_i
-        this._end_i = end_i
+    constructor(start: THREE.Vector2, end: THREE.Vector2, angle: number, line_def: LineDef, direction: boolean, offset: number) {
+        this.start = start
+        this.end = end
         this.angle = angle
-        this._linedef_i = linedef_i
+        this.line_def = line_def
         this.direction = direction
         this.offset = offset
     }
 
-    get start(): THREE.Vector2 {
-        return this._level.vertexes[this._start_i]
-    }
-
-    get end(): THREE.Vector2 {
-        return this._level.vertexes[this._end_i]
-    }
-
-    get linedef(): LineDef {
-        return this._level.linedefs[this._linedef_i]
+    get side_def(): SideDef {
+        return (this.direction ? this.line_def.back : this.line_def.front)!
     }
 }
 
 export class SubSector {
-    _level: Level
-    segments_count: number
-    _segments_i: number
+    segments: Segment[]
 
-    constructor(level: Level, segments_count: number, segments_i: number) {
-        this._level = level
-        this.segments_count = segments_count
-        this._segments_i = segments_i
-    }
-
-    get_segment(i: number): Segment {
-        return this._level.segments[this._segments_i + i]
-    }
-
-    *segments() {
-        for (let i = 0; i < this.segments_count; ++i) {
-            yield this.get_segment(i)
-        }
+    constructor(segments: Segment[]) {
+        this.segments = segments
     }
 }
 
 export class Node {
-    _level: Level
     start: THREE.Vector2
     rel_end: THREE.Vector2
     left_bb: THREE.Box2
     right_bb: THREE.Box2
-    _left_i: number
-    _right_i: number
+    left: Node | SubSector
+    right: Node | SubSector
 
-    constructor(level: Level, start: THREE.Vector2, rel_end: THREE.Vector2, left_bb: THREE.Box2, right_bb: THREE.Box2, left_i: number, right_i: number) {
-        this._level = level
+    constructor(start: THREE.Vector2, rel_end: THREE.Vector2, left_bb: THREE.Box2, right_bb: THREE.Box2, left: Node | SubSector, right: Node | SubSector) {
         this.start = start
         this.rel_end = rel_end
         this.left_bb = left_bb
         this.right_bb = right_bb
-        this._left_i = left_i
-        this._right_i = right_i
+        this.left = left
+        this.right = right
     }
 
     get end(): THREE.Vector2 {
         return this.start.add(this.rel_end)
     }
-
-    get left(): Node | SubSector {
-        if (this._left_i & 0x8000) {
-            return this._level.sub_sectors[this._left_i & 0x7fff]
-        } else {
-            return this._level.nodes[this._left_i]
-        }
-    }
-
-    get right(): Node | SubSector {
-        if (this._right_i & 0x8000) {
-            return this._level.sub_sectors[this._right_i & 0x7fff]
-        } else {
-            return this._level.nodes[this._right_i]
-        }
-    }
 }
-
-
 
 export class Sector {
     floor_height: number
     ceil_height: number
+    floor_tex: string
+    ceil_tex: string
+    light_height: number
+    special_type: number
+    tag: number
 
-    constructor(floor_height: number, ceil_height: number) {
+    constructor(floor_height: number, ceil_height: number, floor_tex: string, ceil_tex: string, light_height: number, special_type: number, tag: number) {
         this.floor_height = floor_height
         this.ceil_height = ceil_height
+        this.floor_tex = floor_tex
+        this.ceil_tex = ceil_tex
+        this.light_height = light_height
+        this.special_type = special_type
+        this.tag = tag
     }
 }
 
 export class Level {
     name: string
-    vertexes: THREE.Vector2[] = []
-    linedefs: LineDef[] = []
-    sidedefs: SideDef[] = []
-    segments: Segment[] = []
-    sub_sectors: SubSector[] = []
-    nodes: Node[] = []
-    sectors: Sector[] = []
+    things: Thing[]
+    line_defs: LineDef[]
+    root: Node
+    sectors: Sector[]
 
-    constructor(name: string) {
+    constructor(name: string, things: Thing[], line_defs: LineDef[], root: Node, sectors: Sector[]) {
         this.name = name
+        this.things = things
+        this.line_defs = line_defs
+        this.root = root
+        this.sectors = sectors
     }
 }
 
 export class WAD {
-    levels: Level[] = []
+    levels: Level[]
 
-    constructor() {
+    constructor(levels: Level[]) {
+        this.levels = levels
     }
 }

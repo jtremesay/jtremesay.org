@@ -17,7 +17,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 import axios from 'axios';
-import { load_wad } from './loaders';
+import { read_wad } from './readers';
 import { read_lumps } from './lumps';
 import * as THREE from 'three';
 import { DoomEngine } from './engine';
@@ -34,7 +34,7 @@ function download_wad(url: string, callback: (wad: WAD) => void, progress?: HTML
                 progress.textContent = `Downloading ${url}... ${event.progress! * 100}%`
             }
         },
-        transformResponse: (data) => load_wad(read_lumps(data))
+        transformResponse: (data) => read_wad(read_lumps(data))
     }).then((response) => callback(response.data))
 }
 
