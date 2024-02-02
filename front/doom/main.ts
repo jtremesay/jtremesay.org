@@ -47,18 +47,39 @@ export function main() {
     renderer.setSize(800, 600);
 
     const $level_sel = $app.append("div").append("label").text("Level: ").append("select");
-    const $draw_linedefs = $app.append("div").append("label").text("Draw linedef: ").append("input").attr("type", "checkbox").attr("checked", true);
-    const $draw_subsectors = $app.append("div").append("label").text("Draw sub sectors (bugged): ").append("input").attr("type", "checkbox");
-    const $draw_bboxes = $app.append("div").append("label").text("Draw bounding boxes: ").append("input").attr("type", "checkbox");
+    const $draw_linedefs = $app.append("div")
+        .append("label")
+        .text("Draw linedef: ")
+        .append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true);
+    const $draw_subsectors = $app.append("div")
+        .append("label")
+        .text("Draw sub sectors (bugged): ")
+        .append("input")
+        .attr("type", "checkbox");
+    const $draw_bboxes = $app.append("div")
+        .append("label")
+        .text("Draw bounding boxes: ")
+        .append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true);
+    const $draw_partitions = $app.append("div")
+        .append("label")
+        .text("Draw partition lines: ")
+        .append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true);
     ($app.node()! as HTMLElement).appendChild(renderer.domElement)
 
     download_wad(
         $app.attr("data-wad-url"),
         (wad) => {
             let engine = new DoomEngine(wad, 0, renderer)
-            engine.linedefs.visible = $draw_linedefs.node()!.checked
+            engine.line_defs.visible = $draw_linedefs.node()!.checked
             engine.bboxes.visible = $draw_bboxes.node()!.checked
-            engine.subsectors.visible = $draw_subsectors.node()!.checked
+            engine.sub_sectors.visible = $draw_subsectors.node()!.checked
+            engine.partition_lines.visible = $draw_partitions.node()!.checked
 
             $level_sel.selectAll("option")
                 .data(wad.levels.map((l) => l.name))
@@ -73,19 +94,23 @@ export function main() {
                 engine.stop()
 
                 engine = new DoomEngine(wad, $level_sel.property("value"), renderer)
-                engine.linedefs.visible = $draw_linedefs.node()!.checked
+                engine.line_defs.visible = $draw_linedefs.node()!.checked
                 engine.bboxes.visible = $draw_bboxes.node()!.checked
-                engine.subsectors.visible = $draw_subsectors.node()!.checked
+                engine.sub_sectors.visible = $draw_subsectors.node()!.checked
+                engine.partition_lines.visible = $draw_partitions.node()!.checked
                 engine.run()
             })
             $draw_linedefs.on("change", function () {
-                engine.linedefs.visible = this.checked
+                engine.line_defs.visible = this.checked
             })
             $draw_bboxes.on("change", function () {
                 engine.bboxes.visible = this.checked
             })
             $draw_subsectors.on("change", function () {
-                engine.subsectors.visible = this.checked
+                engine.sub_sectors.visible = this.checked
+            })
+            $draw_partitions.on("change", function () {
+                engine.partition_lines.visible = this.checked
             })
 
             engine.run()

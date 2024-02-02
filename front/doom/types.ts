@@ -17,6 +17,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import * as THREE from "three"
 export class Thing {
     position: THREE.Vector2
     angle: number
@@ -115,7 +116,11 @@ export class Node {
     }
 
     get end(): THREE.Vector2 {
-        return this.start.add(this.rel_end)
+        return new THREE.Vector2().add(this.start).add(this.rel_end)
+    }
+
+    get bb(): THREE.Box2 {
+        return new THREE.Box2().union(this.left_bb).union(this.right_bb)
     }
 }
 
