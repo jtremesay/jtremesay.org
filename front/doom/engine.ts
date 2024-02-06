@@ -16,29 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { WAD, Node, SubSector, Sector } from "./types"
+import { WAD, Sector } from "./types"
 import * as THREE from "three"
 import * as d3 from "d3"
 
-function generate_segments_group(node: SubSector | Node): THREE.Object3D {
-    if (node instanceof SubSector) {
-        let shape = new THREE.Shape()
-        for (let seg of node.segments) {
-            shape.moveTo(seg.start.x, seg.start.y)
-            shape.lineTo(seg.end.x, seg.end.y)
-        }
-
-        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.white }))
-    }
-
-    let group = new THREE.Group()
-    group.add(generate_segments_group(node.left))
-    group.add(generate_segments_group(node.right))
-
-    return group
-}
-
-function generate_sector_group(sector: Sector, h: number): THREE.Group {
+function generate_sector_group(sector: Sector): THREE.Group {
     let paths = []
     let side_defs = [...sector.side_defs]
     let sd = side_defs.shift()!
@@ -70,11 +52,14 @@ function generate_sector_group(sector: Sector, h: number): THREE.Group {
         }
     }
 
-    let material = new THREE.MeshBasicMaterial({ color: `hsl(${h * 360}, 100%, 50%)` })
+    let material = new THREE.MeshBasicMaterial({ color: `hsl(${Math.random() * 360}, 100%, 20%)` })
+    let material1 = new THREE.MeshBasicMaterial({ color: THREE.Color.NAMES.white })
     let g = new THREE.Group()
     for (let path of paths) {
         let shape = new THREE.Shape(path)
-        g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), material))
+
+        g.add(new THREE.Mesh(new THREE.ShapeGeometry(shape), material))
+        g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), material1))
     }
 
     return g
@@ -84,7 +69,7 @@ function generate_sectors_group(sectors: Sector[], mask = -1): THREE.Group {
     let g = new THREE.Group()
     for (let i = 0; i < sectors.length; ++i) {
         if (mask == -1 || i == mask) {
-            g.add(generate_sector_group(sectors[i], i / sectors.length))
+            g.add(generate_sector_group(sectors[i]))
         }
     }
     return g
@@ -97,8 +82,6 @@ export class Engine {
     renderer: THREE.Renderer
     scene: THREE.Scene = new THREE.Scene()
     level_selector: HTMLSelectElement
-    draw_segments_cb: HTMLInputElement
-    draw_sectors_borders_cb: HTMLInputElement
     draw_sectors_selector_cb: HTMLInputElement
 
 
@@ -119,24 +102,6 @@ export class Engine {
             .attr("value", (_d, i) => i)
             .attr("label", (d) => d.name)
         this.level_selector = $level_selector.node()!
-
-        this.draw_segments_cb = $root.append("div")
-            .append("label")
-            .text("Draw segments: ")
-            .append("input")
-            .attr("type", "checkbox")
-            .property("checked", false)
-            .on("change", this.reload.bind(this))
-            .node()!
-
-        this.draw_sectors_borders_cb = $root.append("div")
-            .append("label")
-            .text("Draw sectors borders:")
-            .append("input")
-            .attr("type", "checkbox")
-            .property("checked", true)
-            .on("change", this.reload.bind(this))
-            .node()!
 
         this.draw_sectors_selector_cb = $root.append("div")
             .append("label")
@@ -163,18 +128,10 @@ export class Engine {
 
         this.scene = new THREE.Scene()
 
-
         let $draw_sectors_selector = d3.select(this.draw_sectors_selector_cb)
         $draw_sectors_selector.attr("max", level.sectors.length - 1)
         let selected_sector_i = $draw_sectors_selector.property("value")
-
-        if (d3.select(this.draw_segments_cb).property("checked")) {
-            this.scene.add(generate_segments_group(level.root))
-        }
-
-        if (d3.select(this.draw_sectors_borders_cb).property("checked")) {
-            this.scene.add(generate_sectors_group(level.sectors, selected_sector_i))
-        }
+        this.scene.add(generate_sectors_group(level.sectors, selected_sector_i))
     }
 
     draw() {
