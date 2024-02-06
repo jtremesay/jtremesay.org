@@ -77,15 +77,27 @@ function read_line_def(data: ArrayBuffer, vertices: THREE.Vector2[], side_defs: 
     let front_i = read_int16(data, offset + 10)
     let back_i = read_int16(data, offset + 12)
 
-    return new LineDef(
+
+
+
+    let ld = new LineDef(
         vertices[read_int16(data, offset)],
         vertices[read_int16(data, offset + 2)],
         read_int16(data, offset + 4),
         read_int16(data, offset + 6),
         read_int16(data, offset + 8),
-        front_i == 0xffff ? null : side_defs[front_i],
+        front_i > 0xffff ? null : side_defs[front_i],
         back_i == 0xffff ? null : side_defs[back_i],
     )
+
+    if (front_i > -1) {
+        side_defs[front_i]._line_def = ld
+    }
+    if (back_i > -1) {
+        side_defs[back_i]._line_def = ld
+    }
+
+    return ld
 }
 
 function read_line_defs(data: ArrayBuffer, vertices: THREE.Vector2[], side_defs: SideDef[]): LineDef[] {
@@ -131,9 +143,12 @@ function read_sub_sector(data: ArrayBuffer, segments: Segment[], offset: number 
     let count = read_int16(data, offset)
     let start = read_int16(data, offset + 2)
 
-    return new SubSector(
+    let ss = new SubSector(
         segments.slice(start, start + count)
     )
+    ss.segments[0].side_def.sector.sub_sectors.push(ss)
+
+    return ss
 }
 
 function read_sub_sectors(data: ArrayBuffer, segments: Segment[]): SubSector[] {

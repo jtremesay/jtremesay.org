@@ -17,117 +17,28 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 import axios from 'axios';
-import { read_wad } from './readers';
-import { read_lumps } from './lumps';
-import * as THREE from 'three';
-import { DoomEngine } from './engine';
-import { WAD } from './types';
 import * as d3 from "d3"
+import { Engine } from './engine';
+import { read_lumps } from './lumps';
+import { read_wad } from './readers';
+import { WAD } from './types';
 
-function download_wad(url: string, callback: (wad: WAD) => void, progress?: HTMLElement) {
+function download_wad(url: string, callback: (wad: WAD) => void) {
     // We don't really need axios for that,
     // but I wanted to pex with this lib
     axios.get(url, {
         responseType: "arraybuffer",
-        onDownloadProgress: (event) => {
-            if (progress) {
-                progress.textContent = `Downloading ${url}... ${event.progress! * 100}%`
-            }
-        },
         transformResponse: (data) => read_wad(read_lumps(data))
     }).then((response) => callback(response.data))
 }
 
-
 export function main() {
     const $app = d3.select(".doom")
-    const $progress = $app.append("p")
 
-    let renderer = new THREE.WebGLRenderer()
-    renderer.setSize(800, 600);
-
-    const $level_sel = $app.append("div").append("label").text("Level: ").append("select");
-    const $draw_linedefs = $app.append("div")
-        .append("label")
-        .text("Draw linedef: ")
-        .append("input")
-        .attr("type", "checkbox")
-        .attr("checked", true);
-    const $draw_segments = $app.append("div")
-        .append("label")
-        .text("Draw segments: ")
-        .append("input")
-        .attr("type", "checkbox")
-        .attr("checked", true);
-    const $draw_subsectors = $app.append("div")
-        .append("label")
-        .text("Draw sub sectors (bugged): ")
-        .append("input")
-        .attr("type", "checkbox");
-    const $draw_bboxes = $app.append("div")
-        .append("label")
-        .text("Draw bounding boxes: ")
-        .append("input")
-        .attr("type", "checkbox")
-    //    .attr("checked", true);
-    const $draw_partitions = $app.append("div")
-        .append("label")
-        .text("Draw partition lines: ")
-        .append("input")
-        .attr("type", "checkbox")
-        //    .attr("checked", true)
-        ;
-    ($app.node()! as HTMLElement).appendChild(renderer.domElement)
-
-    download_wad(
-        $app.attr("data-wad-url"),
-        (wad) => {
-            let create_engine = (level_i: number) => {
-                let engine = new DoomEngine(wad, level_i, renderer)
-                engine.line_defs.visible = $draw_linedefs.node()!.checked
-                engine.segments.visible = $draw_segments.node()!.checked
-                engine.bboxes.visible = $draw_bboxes.node()!.checked
-                engine.sub_sectors.visible = $draw_subsectors.node()!.checked
-                engine.partition_lines.visible = $draw_partitions.node()!.checked
-
-                return engine
-            }
-
-            let engine = create_engine(0)
-
-            $level_sel.selectAll("option")
-                .data(wad.levels.map((l) => l.name))
-                .join("option")
-                .attr("label", function (d) {
-                    return d
-                })
-                .attr("value", function (_d, i) {
-                    return i
-                })
-            $level_sel.on("change", function () {
-                engine.stop()
-
-                engine = create_engine($level_sel.property("value"))
-                engine.run()
-            })
-            $draw_linedefs.on("change", function () {
-                engine.line_defs.visible = this.checked
-            })
-            $draw_segments.on("change", function () {
-                engine.segments.visible = this.checked
-            })
-            $draw_bboxes.on("change", function () {
-                engine.bboxes.visible = this.checked
-            })
-            $draw_subsectors.on("change", function () {
-                engine.sub_sectors.visible = this.checked
-            })
-            $draw_partitions.on("change", function () {
-                engine.partition_lines.visible = this.checked
-            })
-
-            engine.run()
-        },
-        $progress.node()!
-    )
+    const url = $app.attr("data-wad-url")
+    $app.append("p").text(`Downloading ${url}…`)
+    download_wad(url, (wad) => {
+        let engine = new Engine($app.node()! as HTMLElement, wad)
+        engine.run()
+    })
 }

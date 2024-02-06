@@ -58,6 +58,7 @@ export class SideDef {
     lower_tex: string
     middle_tex: string
     sector: Sector
+    _line_def: LineDef | null = null
 
     constructor(offset: THREE.Vector2, upper_tex: string, lower_tex: string, middle_tex: string, sector: Sector) {
         this.offset = offset
@@ -65,6 +66,10 @@ export class SideDef {
         this.lower_tex = lower_tex
         this.middle_tex = middle_tex
         this.sector = sector
+    }
+
+    get line_def(): LineDef {
+        return this._line_def!
     }
 }
 
@@ -136,6 +141,7 @@ export class Sector {
     light_height: number
     special_type: number
     tag: number
+    sub_sectors: SubSector[] = []
 
     constructor(floor_height: number, ceil_height: number, floor_tex: string, ceil_tex: string, light_height: number, special_type: number, tag: number) {
         this.floor_height = floor_height

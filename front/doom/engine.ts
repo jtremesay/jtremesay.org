@@ -16,215 +16,184 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { WAD, Node, SubSector, LineDef } from "./types"
+import { WAD, Node, SubSector, SideDef, Sector } from "./types"
 import * as THREE from "three"
+import * as d3 from "d3"
 
-function generate_bbox(bb: THREE.Box2, color: number): THREE.Object3D {
-    let shape = new THREE.Shape()
-    shape.moveTo(bb.min.x, bb.min.y)
-    shape.lineTo(bb.min.x, bb.max.y)
-    shape.lineTo(bb.max.x, bb.max.y)
-    shape.lineTo(bb.max.x, bb.min.y)
-    let group = new THREE.Group();
-
-    // flat shape
-    let mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: color, opacity: 0.2, transparent: true }))
-    mesh.position.set(0, 0, 0)
-    mesh.scale.set(1, 1, 1)
-    group.add(mesh)
-
-    shape.closePath()
-    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: color })));
-
-    return group
-}
-
-function generate_line(start: THREE.Vector2, end: THREE.Vector2, color: number): THREE.Object3D {
-    let shape = new THREE.Shape()
-    shape.moveTo(start.x, start.y)
-    shape.lineTo(end.x, end.y)
-
-    return new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(shape.getPoints()),
-        new THREE.LineBasicMaterial({ color: color })
-    )
-}
-
-function generate_sub_sector(sub_sector: SubSector): THREE.Object3D {
-    let shape = new THREE.Shape()
-    for (let seg of sub_sector.segments) {
-        let svertex = seg.start
-        shape.moveTo(svertex.x, svertex.y)
-        let evertex = seg.end
-        shape.lineTo(evertex.x, evertex.y)
-    }
-
-    return new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({
-        color: (Math.random() * 0xff << 16) | (Math.random() * 0xff << 8) | 0xff,
-    }))
-}
-
-function generate_sub_sectors(node: Node | SubSector): THREE.Object3D {
-    if (node instanceof SubSector) {
-        return generate_sub_sector(node)
-    }
-
-    let group = new THREE.Group()
-    group.add(generate_sub_sectors(node.left))
-    group.add(generate_sub_sectors(node.right))
-
-    return group
-}
-
-function generate_bboxes(node: Node): THREE.Object3D {
-    let group = new THREE.Group()
-    group.add(generate_bbox(node.left_bb, THREE.Color.NAMES.green))
-    group.add(generate_bbox(node.right_bb, THREE.Color.NAMES.red))
-    if (node.left instanceof Node) {
-        group.add(generate_bboxes(node.left))
-    }
-
-    if (node.right instanceof Node) {
-        group.add(generate_bboxes(node.right))
-    }
-
-    return group
-}
-
-function generate_line_defs(line_defs: LineDef[]): THREE.Object3D {
-    let group = new THREE.Group()
-    for (let line_def of line_defs) {
-        group.add(generate_line(
-            line_def.start,
-            line_def.end,
-            THREE.Color.NAMES.white
-        ))
-    }
-
-    return group
-}
-
-function generate_partition(node: Node): THREE.Object3D {
-    let group = new THREE.Group()
-    let intersect = new THREE.Box2().union(node.left_bb).intersect(node.right_bb)
-
-    if (node.rel_end.x == 0) {
-        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.blue))
-    } else if (node.rel_end.y == 0) {
-        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.red))
-    } else if (false) {
-        group.add(generate_line(intersect.min, intersect.max, THREE.Color.NAMES.magenta))
-        group.add(generate_line(new THREE.Vector2(intersect.min.x, intersect.max.y), new THREE.Vector2(intersect.max.x, intersect.min.y), THREE.Color.NAMES.cyan))
-    }
-    group.add(generate_line(node.start, node.end, THREE.Color.NAMES.yellow))
-
-    return group
-}
-
-function generate_partition_lines(node: Node): THREE.Object3D {
-    let group = new THREE.Group()
-    if (node.left instanceof Node) {
-        group.add(generate_partition_lines(node.left))
-    }
-
-    if (node.right instanceof Node) {
-        group.add(generate_partition_lines(node.right))
-    }
-    group.add(generate_partition(node))
-    return group
-}
-
-function generate_segments(node: Node | SubSector): THREE.Object3D {
+function generate_segments_group(node: SubSector | Node): THREE.Object3D {
     if (node instanceof SubSector) {
         let shape = new THREE.Shape()
         for (let seg of node.segments) {
-            let svertex = seg.start
-            shape.moveTo(svertex.x, svertex.y)
-            let evertex = seg.end
-            shape.lineTo(evertex.x, evertex.y)
+            shape.moveTo(seg.start.x, seg.start.y)
+            shape.lineTo(seg.end.x, seg.end.y)
         }
 
-        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.purple }))
+        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), new THREE.LineBasicMaterial({ color: THREE.Color.NAMES.white }))
     }
 
     let group = new THREE.Group()
-    group.add(generate_segments(node.left))
-    group.add(generate_segments(node.right))
+    group.add(generate_segments_group(node.left))
+    group.add(generate_segments_group(node.right))
 
     return group
 }
 
+function generate_sector_group(side_defs: SideDef[]): THREE.Group {
+    let paths = []
 
-export class DoomEngine {
-    should_run: boolean = true
+    let sd = side_defs.shift()!
+    paths.push([sd.line_def.start, sd.line_def.end])
+
+    while (side_defs.length) {
+        let last_path = paths[paths.length - 1]
+        let last_p = last_path[last_path.length - 1]
+
+        let sd_i = 0
+        for (; sd_i < side_defs.length; ++sd_i) {
+            let sd = side_defs[sd_i]
+            if (last_p.equals(sd.line_def.start)) {
+                last_path.push(sd.line_def.start)
+                last_path.push(sd.line_def.end)
+                break
+            } else if (last_p.equals(sd.line_def.end)) {
+                last_path.push(sd.line_def.end)
+                last_path.push(sd.line_def.start)
+                break
+            }
+        }
+
+        if (sd_i < side_defs.length) {
+            side_defs.splice(sd_i, 1)
+        } else {
+            let sd = side_defs.shift()!
+            paths.push([sd.line_def.start, sd.line_def.end])
+        }
+    }
+
+    let material = new THREE.MeshBasicMaterial({ color: `hsl(${Math.random() * 360}, 100%, 50%)` })
+    let g = new THREE.Group()
+    for (let path of paths) {
+        // if (path.length < 3) {
+        //     console.log("<3", path)
+        // }
+        // if (!path[0].equals(path[path.length - 1])) {
+        //     console.log("mismatch", path)
+        // }
+
+        let shape = new THREE.Shape(path)
+        g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), material))
+    }
+
+    return g
+}
+
+function generate_sectors_group(sectors: Sector[], mask = -1): THREE.Group {
+    let g = new THREE.Group()
+    for (let i = 0; i < sectors.length; ++i) {
+        if (mask == -1 || i == mask) {
+            let side_defs: SideDef[] = []
+            for (let sub_sector of sectors[i].sub_sectors) {
+                side_defs = side_defs.concat(sub_sector.segments.map(s => s.side_def))
+            }
+            g.add(generate_sector_group(side_defs))
+        }
+    }
+    return g
+}
+
+export class Engine {
     wad: WAD
-    scene: THREE.Scene
-    camera: THREE.Camera
+    level_i: number = 0
+    camera: THREE.Camera = new THREE.OrthographicCamera()
     renderer: THREE.Renderer
-    line_defs: THREE.Object3D
-    segments: THREE.Object3D
-    bboxes: THREE.Object3D
-    sub_sectors: THREE.Object3D
-    partition_lines: THREE.Object3D
+    scene: THREE.Scene = new THREE.Scene()
+    level_selector: HTMLSelectElement
+    draw_segments_cb: HTMLInputElement
+    draw_sectors_borders_cb: HTMLInputElement
+    draw_sectors_selector_cb: HTMLInputElement
 
-    constructor(wad: WAD, level_i: number, renderer: THREE.Renderer) {
+
+    constructor(root: HTMLElement, wad: WAD) {
         this.wad = wad
-        this.renderer = renderer
 
-        let level = this.wad.levels[level_i]
-        console.log(level)
-        this.scene = new THREE.Scene()
+        let $root = d3.select(root)
 
+        let $level_selector = $root.append("div")
+            .append("label")
+            .text("Level:")
+            .append("select")
+            .on("change", this.reload.bind(this))
+        $level_selector
+            .selectAll("option")
+            .data(this.wad.levels)
+            .join("option")
+            .attr("value", (_d, i) => i)
+            .attr("label", (d) => d.name)
+        this.level_selector = $level_selector.node()!
+
+        this.draw_segments_cb = $root.append("div")
+            .append("label")
+            .text("Draw segments: ")
+            .append("input")
+            .attr("type", "checkbox")
+            .property("checked", false)
+            .on("change", this.reload.bind(this))
+            .node()!
+
+        this.draw_sectors_borders_cb = $root.append("div")
+            .append("label")
+            .text("Draw sectors borders:")
+            .append("input")
+            .attr("type", "checkbox")
+            .property("checked", true)
+            .on("change", this.reload.bind(this))
+            .node()!
+
+        this.draw_sectors_selector_cb = $root.append("div")
+            .append("label")
+            .text("Sector:")
+            .append("input")
+            .attr("type", "number")
+            .attr("min", -1)
+            .attr("value", -1)
+            .on("input", this.reload.bind(this))
+            .node()!
+        this.renderer = new THREE.WebGLRenderer()
+        this.renderer.setSize(800, 600)
+        root.appendChild(this.renderer.domElement)
+
+        this.reload()
+    }
+
+    reload() {
+        this.level_i = d3.select(this.level_selector).property("value")
+        let level = this.wad.levels[this.level_i]
         let bb = level.root.bb.expandByScalar(100)
         this.camera = new THREE.OrthographicCamera(bb.min.x, bb.max.x, bb.max.y, bb.min.y)
-
-
-        // Sub sectors
-        this.sub_sectors = generate_sub_sectors(level.root)
-        this.scene.add(this.sub_sectors)
-
-        // BBoxes
-        this.bboxes = generate_bboxes(level.root)
-        this.bboxes.position.z = - 1
-        this.scene.add(this.bboxes)
-
-        // Linedefs
-        this.line_defs = generate_line_defs(level.line_defs)
-        this.scene.add(this.line_defs)
-
-        // Segments
-        this.segments = generate_segments(level.root)
-        this.scene.add(this.segments)
-
-
-        // Partition lines
-        this.partition_lines = generate_partition_lines(level.root)
-        this.scene.add(this.partition_lines)
-
         this.camera.position.z = 1;
+
+        this.scene = new THREE.Scene()
+
+
+        let $draw_sectors_selector = d3.select(this.draw_sectors_selector_cb)
+        $draw_sectors_selector.attr("max", level.sectors.length - 1)
+        let selected_sector_i = $draw_sectors_selector.property("value")
+
+        if (d3.select(this.draw_segments_cb).property("checked")) {
+            this.scene.add(generate_segments_group(level.root))
+        }
+
+        if (d3.select(this.draw_sectors_borders_cb).property("checked")) {
+            this.scene.add(generate_sectors_group(level.sectors, selected_sector_i))
+        }
     }
 
     draw() {
         this.renderer.render(this.scene, this.camera)
     }
 
-    update() {
-    }
-
-    frame() {
-        this.update()
-        this.draw()
-    }
-
     run() {
-        if (!this.should_run) {
-            return
-        }
-        this.frame()
+        this.draw()
         window.requestAnimationFrame(this.run.bind(this))
-    }
-
-    stop() {
-        this.should_run = false
     }
 }
