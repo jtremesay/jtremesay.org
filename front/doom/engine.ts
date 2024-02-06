@@ -38,7 +38,7 @@ function generate_segments_group(node: SubSector | Node): THREE.Object3D {
     return group
 }
 
-function generate_sector_group(side_defs: SideDef[]): THREE.Group {
+function generate_sector_group(side_defs: SideDef[], h: number): THREE.Group {
     let paths = []
 
     let sd = side_defs.shift()!
@@ -70,16 +70,9 @@ function generate_sector_group(side_defs: SideDef[]): THREE.Group {
         }
     }
 
-    let material = new THREE.MeshBasicMaterial({ color: `hsl(${Math.random() * 360}, 100%, 50%)` })
+    let material = new THREE.MeshBasicMaterial({ color: `hsl(${h * 360}, 100%, 50%)` })
     let g = new THREE.Group()
     for (let path of paths) {
-        // if (path.length < 3) {
-        //     console.log("<3", path)
-        // }
-        // if (!path[0].equals(path[path.length - 1])) {
-        //     console.log("mismatch", path)
-        // }
-
         let shape = new THREE.Shape(path)
         g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(shape.getPoints()), material))
     }
@@ -95,7 +88,7 @@ function generate_sectors_group(sectors: Sector[], mask = -1): THREE.Group {
             for (let sub_sector of sectors[i].sub_sectors) {
                 side_defs = side_defs.concat(sub_sector.segments.map(s => s.side_def))
             }
-            g.add(generate_sector_group(side_defs))
+            g.add(generate_sector_group(side_defs, i / sectors.length))
         }
     }
     return g
