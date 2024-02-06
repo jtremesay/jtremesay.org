@@ -66,6 +66,7 @@ export class SideDef {
         this.lower_tex = lower_tex
         this.middle_tex = middle_tex
         this.sector = sector
+        sector.side_defs.push(this)
     }
 
     get line_def(): LineDef {
@@ -142,6 +143,7 @@ export class Sector {
     special_type: number
     tag: number
     sub_sectors: SubSector[] = []
+    side_defs: SideDef[] = []
 
     constructor(floor_height: number, ceil_height: number, floor_tex: string, ceil_tex: string, light_height: number, special_type: number, tag: number) {
         this.floor_height = floor_height

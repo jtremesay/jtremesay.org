@@ -38,9 +38,9 @@ function generate_segments_group(node: SubSector | Node): THREE.Object3D {
     return group
 }
 
-function generate_sector_group(side_defs: SideDef[], h: number): THREE.Group {
+function generate_sector_group(sector: Sector, h: number): THREE.Group {
     let paths = []
-
+    let side_defs = [...sector.side_defs]
     let sd = side_defs.shift()!
     paths.push([sd.line_def.start, sd.line_def.end])
 
@@ -84,11 +84,7 @@ function generate_sectors_group(sectors: Sector[], mask = -1): THREE.Group {
     let g = new THREE.Group()
     for (let i = 0; i < sectors.length; ++i) {
         if (mask == -1 || i == mask) {
-            let side_defs: SideDef[] = []
-            for (let sub_sector of sectors[i].sub_sectors) {
-                side_defs = side_defs.concat(sub_sector.segments.map(s => s.side_def))
-            }
-            g.add(generate_sector_group(side_defs, i / sectors.length))
+            g.add(generate_sector_group(sectors[i], i / sectors.length))
         }
     }
     return g
