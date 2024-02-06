@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { WAD, Node, SubSector, SideDef, Sector } from "./types"
+import { WAD, Node, SubSector, Sector } from "./types"
 import * as THREE from "three"
 import * as d3 from "d3"
 
