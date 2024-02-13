@@ -10,12 +10,12 @@
   "devDependencies": {
     "django-vite-plugin": "^4.0.0",
     "glob": "^10.3.10",
-    "typescript": "^5.0.2",
-    "vite": "^5.0.11"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.1"
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
-    "@types/three": "^0.160.0",
+    "@types/three": "^0.161.2",
     "axios": "^1.6.7",
     "d3": "^7.8.5",
     "three": "^0.161.0"
