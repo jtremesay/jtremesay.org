@@ -25,7 +25,7 @@ services:
       - "traefik.http.middlewares.jtremesay-compress.compress=true"
       - "traefik.http.routers.jtremesay.entrypoints=websecure"
       - "traefik.http.routers.jtremesay.middlewares=jtremesay-compress"
-      - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`, `slaanesh.org`)"
+      - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`) || Host(`slaanesh.org`)"
       - "traefik.http.routers.jtremesay.service=jtremesay"
       - "traefik.http.routers.jtremesay.tls.certresolver=zerossl"
       - "traefik.http.services.jtremesay.loadbalancer.server.port=80"
