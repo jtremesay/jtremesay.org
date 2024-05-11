@@ -77,7 +77,6 @@ class Document:
         :param path: Path to the document
         :return: The loaded document
         """
-        print(f"Loading {path.resolve()}")
         metadata = {}
         content = StringIO()
 
