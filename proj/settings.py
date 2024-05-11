@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from os import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,28 +21,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-9!0795y0+j^(ke7qvd9uw+mv(0p9=9gh@ua+@ecuvlg^8yh!=2"
+environ.setdefault(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-9!0795y0+j^(ke7qvd9uw+mv(0p9=9gh@ua+@ecuvlg^8yh!=2",
+)
+SECRET_KEY = environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+environ.setdefault("DJANGO_DEBUG", "false")
+DEBUG = environ["DJANGO_DEBUG"] == "true"
 
-ALLOWED_HOSTS = []
+if not DEBUG and "insecure" in SECRET_KEY:
+    raise ValueError("Insecure secret not allowd in production", SECRET_KEY)
 
+
+ALLOWED_HOSTS = ["new.jtremesay.org", "jtremesay.org", "localhost"]
 
 # Application definition
-
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "jtremesay",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -68,6 +79,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "proj.asgi.application"
 WSGI_APPLICATION = "proj.wsgi.application"
 
 
@@ -79,6 +91,17 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
+}
+
+# Storage
+# https://docs.djangoproject.com/en/5.0/ref/settings/#storages
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
 
 
@@ -104,9 +127,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "fr-fr"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Paris"
 
 USE_I18N = True
 
@@ -117,6 +140,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
