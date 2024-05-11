@@ -39,6 +39,7 @@ COPY jtremesay/ jtremesay/
 
 # Build
 RUN DJANGO_SECRET_KEY=django-secure-build ./manage.py collectstatic --noinput
+RUN python -m compileall jtremesay proj
 
 # Expose port
 EXPOSE 8000

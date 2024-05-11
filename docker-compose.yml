@@ -14,14 +14,27 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 version: "3.8"
 services:
+  db-pg16:
+    image: "postgres:16"
+    environment:
+      POSTGRES_DB: "jtremesay"
+      POSTGRES_USER: "jtremesay"
+      POSTGRES_PASSWORD: "jtremesay"
+    networks:
+      - database
+    volumes:
+      - postgres16_data:/var/lib/postgresql/data_pg16
+
   jtremesay:
     image: "killruana/jtremesay.org:new"
     environment:
+      DATABASE_URL: "postgres://jtremesay:jtremesay@db-pg16/jtremesay"
       DJANGO_SECRET_KEY_FILE: "/run/secrets/jtremesay_secret_key"
     ports:
       - 8000:8000
     networks:
       - "traefik_public"
+      - "database"
     secrets:
       - jtremesay_secret_key
     labels:
@@ -37,5 +50,9 @@ secrets:
     external: true
 
 networks:
+  database:
   traefik_public:
     external: true
+
+volumes:
+  postgres16_data:
