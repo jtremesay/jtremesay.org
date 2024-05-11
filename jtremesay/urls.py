@@ -10,12 +10,12 @@ from jtremesay.models import Page, Post
 
 def get_pages() -> Iterable[dict[str, Any]]:
     """Get available pages."""
-    return ({"slug": p.slug} for p in Page.load_glob())
+    return ({"slug": s} for s in Page.PAGES().keys())
 
 
 def get_posts():
     """Get available posts."""
-    return ({"slug": p.slug} for p in Post.load_glob())
+    return ({"slug": s} for s in Post.POSTS().keys())
 
 
 app_name = "jtremesay"

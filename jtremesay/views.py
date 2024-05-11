@@ -32,7 +32,7 @@ class PostFeedsView(Feed):
     feed_type = Atom1Feed
 
     def items(self) -> list[Post]:
-        return sorted(Post.load_glob(), key=lambda p: p.timestamp, reverse=True)[:20]
+        return sorted(Post.POSTS.values(), key=lambda p: p.timestamp, reverse=True)[:20]
 
     def item_title(self, post: Post) -> str:
         return post.title
@@ -52,7 +52,7 @@ class PageView(DetailView):
     template_name = "jtremesay/page.html"
 
     def get_object(self, queryset: QuerySet[Any] | None = None) -> Model:
-        return self.model.load_page_with_slug(self.kwargs["slug"])
+        return Page.PAGES()[self.kwargs["slug"]]
 
 
 class IndexView(PageView):
@@ -67,3 +67,6 @@ class IndexView(PageView):
 class PostView(PageView):
     model = Post
     template_name = "jtremesay/post.html"
+
+    def get_object(self, queryset: QuerySet[Any] | None = None) -> Model:
+        return Post.POSTS()[self.kwargs["slug"]]

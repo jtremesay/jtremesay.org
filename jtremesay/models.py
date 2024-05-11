@@ -60,7 +60,9 @@ class Document:
                 Context(
                     {
                         "posts": sorted(
-                            Post.load_glob(), key=lambda p: p.timestamp, reverse=True
+                            Post.POSTS().values(),
+                            key=lambda p: p.timestamp,
+                            reverse=True,
                         )
                     }
                 )
@@ -75,6 +77,7 @@ class Document:
         :param path: Path to the document
         :return: The loaded document
         """
+        print(f"Loading {path.resolve()}")
         metadata = {}
         content = StringIO()
 
@@ -169,6 +172,15 @@ class Page(Document):
         """Overridden only to make the static typing happy."""
         return super().load_glob(path, glob)
 
+    __PAGES = None
+
+    @classmethod
+    def PAGES(cls) -> Mapping[str, "Page"]:
+        if cls.__PAGES is None or settings.DEBUG:
+            cls.__PAGES = {p.slug: p for p in cls.load_glob()}
+
+        return cls.__PAGES
+
 
 class Post(Page):
     """A webblog post."""
@@ -190,3 +202,12 @@ class Post(Page):
     ) -> Iterator["Post"]:
         """Overridden only to make the static typing happy."""
         return super().load_glob(path, glob)
+
+    __POSTS = None
+
+    @classmethod
+    def POSTS(cls) -> Mapping[str, "Post"]:
+        if cls.__POSTS is None or settings.DEBUG:
+            cls.__POSTS = {p.slug: p for p in cls.load_glob()}
+
+        return cls.__POSTS
