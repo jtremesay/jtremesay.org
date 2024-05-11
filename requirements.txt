@@ -1,5 +1,6 @@
 dj-database-url==2.1.0 
 Django==5.0.6
+django-vite-plugin==3.0.0 
 daphne==4.1.2
 psycopg[binary,pool]==3.1.19
 whitenoise==6.6.0

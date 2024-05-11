@@ -18,7 +18,7 @@ FROM ubuntu:noble
 
 # Update packages and install needed stuff
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends python3-pip python3-venv \
+    && apt-get install -y --no-install-recommends npm python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Create venv (make pip install happy)
@@ -29,16 +29,18 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 WORKDIR /opt/jtremesay
 
 # Install python deps
-COPY requirements.txt ./
-RUN pip install -Ur requirements.txt
+COPY requirements.txt package.json package-lock.json ./
+RUN npm install && pip install -Ur requirements.txt
 
 # Copy source dir
-COPY manage.py entrypoint.sh ./
+COPY manage.py entrypoint.sh vite.config.js ./
 COPY proj/ proj/
 COPY jtremesay/ jtremesay/
 
 # Build
-RUN DJANGO_SECRET_KEY=django-secure-build ./manage.py collectstatic --noinput
+ARG DJANGO_SECRET_KEY=django-secure-build
+RUN mkdir -p staticfiles/.vite && echo '{}' > staticfiles/.vite/manifest.json
+RUN npm run build && ./manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
