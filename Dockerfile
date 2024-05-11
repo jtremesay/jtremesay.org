@@ -49,6 +49,7 @@ ARG DJANGO_SECRET_KEY=django-secure-build
 # So we create an empty manifest.json file to break the chicken-egg problem
 RUN mkdir -p staticfiles/.vite && echo '{}' > staticfiles/.vite/manifest.json \
     && npm run build \
+    #    && ./manage.py distill-local --collectstatic --force dist \
     && ./manage.py collectstatic --noinput \
     && rm -rf node_modules
 

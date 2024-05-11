@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_vite_plugin",
     "jtremesay",
+    "django_distill",
 ]
 
 MIDDLEWARE = [
