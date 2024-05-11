@@ -7,6 +7,7 @@ export default defineConfig({
         djangoVitePlugin({
             input: [
                 ...globSync('jtremesay/static/jtremesay/js/**/*.js'),
+                ...globSync('jtremesay/static/jtremesay/js/**/*.ts'),
             ]
         })
     ],
