@@ -49,6 +49,7 @@ if not DEBUG and "insecure" in SECRET_KEY:
 
 
 ALLOWED_HOSTS = ["new.jtremesay.org", "jtremesay.org", "localhost"]
+CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
 
 # Application definition
 INSTALLED_APPS = [
