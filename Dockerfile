@@ -45,8 +45,10 @@ ARG DJANGO_SECRET_KEY=django-secure-build
 # except that npm run build run ./manage.py XXX to get some config info
 # You see the problem here?
 # So we create an empty manifest.json file to break the chicken-egg problem
-RUN mkdir -p staticfiles/.vite && echo '{}' > staticfiles/.vite/manifest.json
-RUN npm run build && ./manage.py collectstatic --noinput
+RUN mkdir -p staticfiles/.vite && echo '{}' > staticfiles/.vite/manifest.json \
+    && npm run build \
+    && ./manage.py collectstatic --noinput \
+    && rm -rf node_modules
 
 # Expose port
 EXPOSE 8000
