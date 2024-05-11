@@ -39,15 +39,15 @@ jobs:
           cache-from: type=registry,ref=killruana/jtremesay.org:buildcache
           cache-to: type=registry,ref=killruana/jtremesay.org:buildcache,mode=max
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   if: github.ref == 'refs/heads/new'
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/new'
 
-  #   steps:
-  #     -
-  #       name: Deploy
-  #       uses: distributhor/workflow-webhook@v3
-  #       with:
-  #         webhook_url: ${{ secrets.WEBHOOK_URL }}
-  #         verify_ssl: false
+    steps:
+      -
+        name: Deploy
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL_NEW }}
+          verify_ssl: false
