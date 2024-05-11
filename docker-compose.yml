@@ -16,10 +16,14 @@ version: "3.8"
 services:
   jtremesay:
     image: "killruana/jtremesay.org:new"
+    environment:
+      DJANGO_SECRET_KEY_FILE: "/run/secrets/jtremesay_secret_key"
     ports:
       - 8000:8000
     networks:
       - "traefik_public"
+    secrets:
+      - jtremesay_secret_key
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jtremesay-new.entrypoints=websecure"
@@ -27,6 +31,10 @@ services:
       - "traefik.http.routers.jtremesay-new.service=jtremesay-new"
       - "traefik.http.routers.jtremesay-new.tls.certresolver=leresolver"
       - "traefik.http.services.jtremesay-new.loadbalancer.server.port=8000"
+
+secrets:
+  jtremesay_secret_key:
+    external: true
 
 networks:
   traefik_public:
