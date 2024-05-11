@@ -35,7 +35,7 @@ RUN npm install \
     && pip cache purge
 
 # Copy source dir
-COPY manage.py entrypoint.sh vite.config.ts ./
+COPY manage.py entrypoint.sh tsconfig.json vite.config.ts ./
 COPY proj/ proj/
 COPY jtremesay/ jtremesay/
 

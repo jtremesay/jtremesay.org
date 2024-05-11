@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "tsc && vite build"
   },
   "devDependencies": {
     "django-vite-plugin": "^4.0.0",
