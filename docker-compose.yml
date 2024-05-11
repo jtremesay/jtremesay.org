@@ -28,6 +28,7 @@ services:
   jtremesay:
     image: "killruana/jtremesay.org:new"
     environment:
+      DJANGO_DEBUG: "true"
       DATABASE_URL: "postgres://jtremesay:jtremesay@db-pg16/jtremesay"
       DJANGO_SECRET_KEY_FILE: "/run/secrets/jtremesay_secret_key"
     ports:
