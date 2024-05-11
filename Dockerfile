@@ -37,6 +37,7 @@ RUN npm install \
 # Copy source dir
 COPY manage.py entrypoint.sh tsconfig.json vite.config.ts ./
 COPY proj/ proj/
+COPY analytics/ analytics/
 COPY jtremesay/ jtremesay/
 
 # Build
