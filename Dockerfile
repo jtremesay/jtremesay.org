@@ -30,7 +30,9 @@ WORKDIR /opt/jtremesay
 
 # Install python deps
 COPY requirements.txt package.json package-lock.json ./
-RUN npm install && pip install -Ur requirements.txt
+RUN npm install \
+    && pip install -r requirements.txt \
+    && pip cache purge
 
 # Copy source dir
 COPY manage.py entrypoint.sh vite.config.ts ./
