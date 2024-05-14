@@ -147,12 +147,12 @@ $svg.append('g')
     .attr('cy', pill => pill.position.y * tile_size_px + tile_size_px / 2)
     .attr('r', tile_size_px / 4)
     .attr('fill', pill => hsla(HUES[pill.match_id], 1, 0.5))
-    .on("mouseover", function (event, pill) {
+    .on("mouseover", function () {
         d3.select(this).transition()
             .duration(1000)
             .ease(d3.easeElastic)
             .attr('r', tile_size_px / 2.5)
-    }).on("mouseout", function (event, pill) {
+    }).on("mouseout", function () {
         d3.select(this).transition()
             .duration(1000)
             .ease(d3.easeElastic)
