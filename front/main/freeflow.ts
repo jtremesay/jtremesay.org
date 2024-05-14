@@ -53,6 +53,7 @@ export class State {
     size: Vec2;
     pills: Pill[];
     flows: Flow[] = [];
+    building_flow: Flow | null = null;
 
     constructor(size: Vec2, pills: Pill[]) {
         this.size = size;
@@ -84,30 +85,56 @@ state.flows.push(new Flow(0, [
     vec2(2, 3),
     vec2(3, 3),
 ]));
-state.flows.push(new Flow(1, [
-    vec2(1, 0),
-    vec2(2, 0),
-    vec2(3, 0),
-    vec2(4, 0),
-    vec2(4, 1),
-    vec2(4, 2),
-    vec2(4, 3),
-]));
+// state.flows.push(new Flow(1, [
+//     vec2(1, 0),
+//     vec2(2, 0),
+//     vec2(3, 0),
+//     vec2(4, 0),
+//     vec2(4, 1),
+//     vec2(4, 2),
+//     vec2(4, 3),
+// ]));
 state.flows.push(new Flow(2, [
     vec2(1, 2),
     vec2(1, 1),
     vec2(2, 1),
 ]));
-state.flows.push(new Flow(3, [
-    vec2(2, 2),
-    vec2(3, 2),
-    vec2(3, 1),
-]));
+// state.flows.push(new Flow(3, [
+//     vec2(2, 2),
+//     vec2(3, 2),
+//     vec2(3, 1),
+// ]));
+
+state.building_flow = new Flow(1, [
+    vec2(1, 0),
+    vec2(2, 0),
+    vec2(3, 0),
+    vec2(4, 0),
+    vec2(4, 1),
+]);
+
 
 let $svg = d3.select('#freeflow').append('svg');
 $svg.style('background-color', 'black');
 $svg.attr('width', `${state.size.x * tile_size_px}`);
 $svg.attr('height', `${state.size.y * tile_size_px}`);
+
+// draw tiles
+$svg.append('g')
+    .classed('tiles', true)
+    .selectAll("path")
+    .data(state.flows)
+    .join('path')
+    .attr('d', flow => {
+        return flow.positions.map((pos, i) => {
+            return `${i === 0 ? 'M' : 'L'} ${pos.x * tile_size_px + tile_size_px / 2} ${pos.y * tile_size_px + tile_size_px / 2}`;
+        }).join(' ');
+    })
+    .attr('stroke', flow => hsla(HUES[flow.match_id], 9, 0.2))
+    .attr('stroke-width', tile_size_px)
+    .attr("stroke-linejoin", "square")
+    .attr("stroke-linecap", "square")
+    .attr('fill', 'none');
 
 // Draw grid
 $svg.append('g')
@@ -163,7 +190,7 @@ $svg.append('g')
 $svg.append('g')
     .classed('flows', true)
     .selectAll("path")
-    .data(state.flows)
+    .data([...state.flows, state.building_flow])
     .join('path')
     .attr('d', flow => {
         return flow.positions.map((pos, i) => {
@@ -173,4 +200,5 @@ $svg.append('g')
     .attr('stroke', flow => hsla(HUES[flow.match_id], 1, 0.5))
     .attr('stroke-width', tile_size_px / 4)
     .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
     .attr('fill', 'none');
