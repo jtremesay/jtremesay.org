@@ -12,7 +12,7 @@ slug: index
 - [Scada player]({% url 'page' 'scadaplayer' %}) : un outil pour visualiser les données issues d'une éolienne
 - [Crankshaft]({% url 'page' 'crankshaft' %}) : Simulation de systèmes vilebrequin / bielle / piston
 - [Doom]({% url 'page' 'doom' %}) : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
-
+- [free flow]({% url 'page' 'freeflow' %}) : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
 ## Projets
 
 Quelqu'uns de mes projets :
