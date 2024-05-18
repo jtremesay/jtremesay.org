@@ -1,0 +1,18 @@
+.freeflow {
+    background-color: black;
+}
+
+.freeflow .tile {
+    stroke: white;
+    stroke-width: 1px;
+}
+
+.freeflow .flow {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+.freeflow .sensitive-tile {
+    fill: transparent;
+}
