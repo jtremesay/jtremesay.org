@@ -167,7 +167,7 @@ export function main() {
                         state.current_flow.tiles.pop();
 
                         draw($svg, state)
-                    } else if (tile.flow === null && tile.pill_id === null || tile.pill_id === state.current_flow.pill_id) {
+                    } else if (tile.flow === null && (tile.pill_id === null || (tile.pill_id === state.current_flow.pill_id && !tile.position.eq(state.current_flow.head.position)))) {
                         // push new tile
                         state.current_flow.tiles.push(tile);
                         tile.flow = state.current_flow;
