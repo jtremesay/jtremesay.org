@@ -178,7 +178,6 @@ export function main() {
 
                         draw($svg, state)
                     }
-
                 }
             }
         })
