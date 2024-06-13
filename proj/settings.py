@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "jssg",
+    "jtremesay",
 ]
 
 MIDDLEWARE = [
