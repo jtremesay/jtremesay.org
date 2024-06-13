@@ -1,0 +1,31 @@
+{% load static %}
+{% load vite %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jtremesay.org{% if object %} | {{ object.title }}{% endif %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'theme/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'theme/favicon-16x16.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'theme/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'pygments/monokai.css' %}">
+    {% vite %}
+</head>
+
+<body>
+    <header>
+        {% include "blocks/header.html" %}
+    </header>
+    <hr>
+    <main>
+        {% block "content" %}{% endblock %}
+    </main>
+    <hr>
+    <footer>
+        {% include "blocks/footer.html" %}
+    </footer>
+</body>
+
+</html>
