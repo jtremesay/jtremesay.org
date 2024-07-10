@@ -25,8 +25,9 @@ import { Vector2 } from "../jengine/vector";
 
 class MyVectorSpace implements VectorSpace {
     vector_at(x: number, y: number): Vector2 {
-        let p = new Vector2(x / 800, y / 600)
-        p = new Vector2(0.5, 0.5).sub(p)
+        let p = new Vector2(x / 800, y / 600) // normalize
+        p = new Vector2(0.5, 0.5).sub(p) // distance to center, center attract
+        // apply a rotational force
         const a = Math.PI / 2;
         p = p.add(new Vector2(Math.cos(a) * p.x - Math.sin(a) * p.y, Math.sin(a) * p.x + Math.cos(a) * p.y));
         return p
