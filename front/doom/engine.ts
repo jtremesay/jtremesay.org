@@ -21,8 +21,9 @@ import * as THREE from "three"
 import * as d3 from "d3"
 import { View2D } from "./view2d"
 import { View3D } from "./view3d"
+import { EngineRenderer } from "../jengine/engine"
 
-export class Engine {
+export class DoomData {
     wad: WAD
     camera: THREE.Camera = new THREE.OrthographicCamera()
     scene: THREE.Scene = new THREE.Scene()
@@ -57,25 +58,29 @@ export class Engine {
         this.on_level_selected()
     }
 
-    load_level(level: Level) {
-        console.log(level)
-        this.view2D.load_level(level)
-        this.view3D.load_level(level)
-    }
-
     on_level_selected() {
         let level_i = d3.select(this.level_selector).property("value")
         let level = this.wad.levels[level_i]
         this.load_level(level)
     }
 
-    draw() {
-        this.view2D.render()
-        this.view3D.render()
+    load_level(level: Level) {
+        console.log(level)
+        this.view2D.load_level(level)
+        this.view3D.load_level(level)
+    }
+}
+
+export class DoomRenderer implements EngineRenderer<DoomData> {
+    constructor() {
     }
 
-    run() {
-        this.draw()
-        window.requestAnimationFrame(this.run.bind(this))
+    render(data: DoomData | null): void {
+        if (data === null) {
+            return
+        }
+
+        data.view2D.render()
+        data.view3D.render()
     }
 }

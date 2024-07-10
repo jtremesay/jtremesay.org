@@ -18,7 +18,8 @@
  */
 import axios from 'axios';
 import * as d3 from "d3"
-import { Engine } from './engine';
+import { Engine } from '../jengine/engine';
+import { DoomData, DoomRenderer } from './engine';
 import { read_lumps } from './lumps';
 import { read_wad } from './readers';
 import { WAD } from './types';
@@ -38,7 +39,9 @@ export function main() {
     const url = $app.attr("data-wad-url")
     $app.append("p").text(`Downloading ${url}…`)
     download_wad(url, (wad) => {
-        let engine = new Engine($app.node()! as HTMLElement, wad)
-        engine.run()
+        let data = new DoomData($app.node()! as HTMLElement, wad)
+        let renderer = new DoomRenderer()
+        let updater = null
+        new Engine(updater, renderer, data).start()
     })
 }
