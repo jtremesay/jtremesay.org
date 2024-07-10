@@ -1,31 +1,12 @@
-/*
- * Crankshaft
- * Copyright (C) 2024 Jonathan Tremesaygues
- *
- * crankshaft.ts
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 import * as d3 from "d3"
+import { Engine, EngineData, EngineUpdater } from "../jengine/engine";
+
 
 const PIN_RADIUS = 10
 const PISTON_HEIGHT = PIN_RADIUS + 40
 const PISTON_RADIUS = 50
 
-class Engine {
-    should_run: boolean
-
+class CrankShaftData implements EngineData {
     crankshaft_radius: number
     rod_length: number
 
@@ -36,8 +17,6 @@ class Engine {
     piston_pin_node: d3.BaseType
 
     constructor(crankshaft_radius: number, rod_length: number, container: d3.BaseType) {
-        this.should_run = true
-
         this.crankshaft_radius = crankshaft_radius
         this.rod_length = rod_length
 
@@ -94,26 +73,32 @@ class Engine {
         this.text_infos_node = $svg.append("g")
             .attr("transform", "translate(5, 20)").node()
     }
+}
 
-    update(dt: DOMHighResTimeStamp) {
+class CrankShaftUpdater implements EngineUpdater<CrankShaftData> {
+    update(data: CrankShaftData | null, dt: DOMHighResTimeStamp): CrankShaftData | null {
+        if (data === null) {
+            return null
+        }
+
         let theta = dt / 1000
 
-        let tdc_y = this.crankshaft_radius + this.rod_length
-        let piston_y = -(this.crankshaft_radius * Math.cos(theta) + Math.sqrt(Math.pow(this.rod_length, 2) - Math.pow(this.crankshaft_radius, 2) * Math.pow(Math.sin(theta), 2)))
+        let tdc_y = data.crankshaft_radius + data.rod_length
+        let piston_y = -(data.crankshaft_radius * Math.cos(theta) + Math.sqrt(Math.pow(data.rod_length, 2) - Math.pow(data.crankshaft_radius, 2) * Math.pow(Math.sin(theta), 2)))
         let piston_yrel = tdc_y + piston_y
-        let cylinder_vol = (PISTON_RADIUS * PISTON_RADIUS * Math.PI) * (this.crankshaft_radius * 2)
-        let cylinder_ratio = piston_yrel / (2 * this.crankshaft_radius)
-        let theta_rod = -Math.asin(Math.sin(theta) * this.crankshaft_radius / this.rod_length)
+        let cylinder_vol = (PISTON_RADIUS * PISTON_RADIUS * Math.PI) * (data.crankshaft_radius * 2)
+        let cylinder_ratio = piston_yrel / (2 * data.crankshaft_radius)
+        let theta_rod = -Math.asin(Math.sin(theta) * data.crankshaft_radius / data.rod_length)
 
         // Infos
-        d3.select(this.text_infos_node).selectAll("text")
+        d3.select(data.text_infos_node).selectAll("text")
             .data([
-                `Crankshaft radius: ${this.crankshaft_radius} units`,
+                `Crankshaft radius: ${data.crankshaft_radius} units`,
                 `Crankshaft theta: ${(theta % (2 * Math.PI)).toFixed(1)} rad`,
                 `Crankshaft ang. vel.: 60 RPM`,
-                `Crankshaft lin. vel.: ${(2 * this.crankshaft_radius * Math.PI).toFixed(1)} units.s⁻¹`,
-                `Rod length: ${this.rod_length} units`,
-                `Rod / Crankshaft ratio: ${(this.rod_length / this.crankshaft_radius).toFixed(2)}`,
+                `Crankshaft lin. vel.: ${(2 * data.crankshaft_radius * Math.PI).toFixed(1)} units.s⁻¹`,
+                `Rod length: ${data.rod_length} units`,
+                `Rod / Crankshaft ratio: ${(data.rod_length / data.crankshaft_radius).toFixed(2)}`,
                 `Rod theta: ${(theta_rod).toFixed(1)} rad`,
                 `Piston radius: ${PISTON_RADIUS} units`,
                 `Piston height: ${PISTON_HEIGHT} units`,
@@ -126,40 +111,31 @@ class Engine {
             .text((d) => d)
 
         // Piston
-        d3.select(this.piston_node)
+        d3.select(data.piston_node)
             .attr("transform", [
                 `translate(0, ${piston_y})`,
             ])
 
         // Rod
-        d3.select(this.rod_node)
+        d3.select(data.rod_node)
             .attr("transform", [
                 `translate(0, ${piston_y})`,
                 `rotate(${theta_rod * 180 / Math.PI})`
             ])
 
         // Crankshaft pin
-        d3.select(this.crankshaft_pin_node)
+        d3.select(data.crankshaft_pin_node)
             .attr("transform", [
-                `translate(0, ${-this.crankshaft_radius})`,
-                `rotate(${theta * 180 / Math.PI}, 0, ${this.crankshaft_radius})`])
+                `translate(0, ${-data.crankshaft_radius})`,
+                `rotate(${theta * 180 / Math.PI}, 0, ${data.crankshaft_radius})`])
 
         // Piston pin
-        d3.select(this.piston_pin_node)
+        d3.select(data.piston_pin_node)
             .attr("transform", [`translate(0, ${piston_y})`])
-    }
 
-    run() {
-        this.should_run = true
-        window.requestAnimationFrame((dt: DOMHighResTimeStamp) => {
-            this.update(dt)
-            if (this.should_run) {
-                this.run()
-            }
-        })
+        return null
     }
 }
-
 
 
 d3.select("#app").call(function ($app) {
@@ -195,7 +171,10 @@ d3.select("#app").call(function ($app) {
                         $tr.selectAll("td")
                             .data(crankshaft_radiuses)
                             .join("td").each(function (crankshaft_radius) {
-                                new Engine(crankshaft_radius, crankshaft_radius * rod_scale, this).run()
+                                const data = new CrankShaftData(crankshaft_radius, crankshaft_radius * rod_scale, this)
+                                const updater = new CrankShaftUpdater()
+                                const renderer = null
+                                new Engine(updater, renderer, data).start()
                             })
                     })
                 })
