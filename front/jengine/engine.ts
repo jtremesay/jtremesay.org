@@ -30,6 +30,7 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
     updater: U | null;
     renderer: R | null;
     data: D | null;
+    last_time: DOMHighResTimeStamp = 0;
 
     constructor(updater: U | null, renderer: R | null, data: D | null) {
         this.updater = updater;
@@ -37,7 +38,7 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
         this.data = data;
     }
 
-    update(dt: DOMHighResTimeStamp) {
+    update(dt: number) {
         if (this.updater !== null) {
             const new_data = this.updater.update(this.data, dt);
             if (new_data !== null) {
@@ -52,7 +53,10 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
         }
     }
 
-    run(dt: DOMHighResTimeStamp) {
+    run(timestamp: DOMHighResTimeStamp = 0) {
+        const dt = (timestamp - this.last_time) / 1000;
+        this.last_time = timestamp;
+
         this.update(dt);
         this.render();
 
@@ -60,6 +64,7 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
     }
 
     start() {
-        this.run(1 * 1000 / 60)
+        this.last_time = 0
+        this.run(0)
     }
 }

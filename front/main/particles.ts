@@ -19,13 +19,17 @@
 
 import { ParticleData, ParticleRenderer, ParticleUpdater } from "../particles/engine";
 import { Engine } from "../jengine/engine";
-import { VectorSpace } from "../jengine/vector_space";
+import { VectorSpace, QuantifiedVectorSpace } from "../jengine/vector_space";
 import { Vector2 } from "../jengine/vector";
 
 
 class MyVectorSpace implements VectorSpace {
     vector_at(x: number, y: number): Vector2 {
-        return new Vector2(Math.sin(x), Math.cos(y));
+        let p = new Vector2(x / 800, y / 600)
+        p = new Vector2(0.5, 0.5).sub(p)
+        const a = Math.PI / 2;
+        p = p.add(new Vector2(Math.cos(a) * p.x - Math.sin(a) * p.y, Math.sin(a) * p.x + Math.cos(a) * p.y));
+        return p
     }
 }
 
@@ -35,8 +39,8 @@ function main() {
     canvas.height = 600;
 
 
-    const vector_space = new MyVectorSpace();
-    const data = new ParticleData(vector_space);
+    const vector_space = new QuantifiedVectorSpace(new MyVectorSpace(), canvas.width, canvas.height);
+    const data = new ParticleData(vector_space, 10000);
     const updater = new ParticleUpdater();
     const renderer = new ParticleRenderer(canvas);
     const engine = new Engine(updater, renderer, data);

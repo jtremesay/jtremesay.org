@@ -56,6 +56,8 @@ export class QuantifiedVectorSpace implements VectorSpace {
     }
 
     vector_at(x: number, y: number): Vector2 {
+        y = y | 0
+        x = x | 0
         return this.cached_vectors[y][x];
     }
 }

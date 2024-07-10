@@ -57,7 +57,11 @@ export class Vector2 {
         return this.x * v.y - this.y * v.x;
     }
 
-    angle(v: Vector2): number {
+    angle_to(v: Vector2): number {
         return Math.acos(this.dot(v) / (this.mag() * v.mag()));
+    }
+
+    angle(): number {
+        return Math.atan2(this.y, this.x);
     }
 }
