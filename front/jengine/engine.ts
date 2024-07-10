@@ -17,19 +17,16 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export interface EngineUpdater<D extends EngineData> {
+export interface EngineUpdater<D> {
     update(data: D | null, dt: DOMHighResTimeStamp): D | null;
 }
 
-export interface EngineRenderer<D extends EngineData> {
+export interface EngineRenderer<D> {
     render(data: D | null): void;
 }
 
-export interface EngineData {
-}
 
-
-export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D extends EngineData> {
+export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> {
     updater: U | null;
     renderer: R | null;
     data: D | null;

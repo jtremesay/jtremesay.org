@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { EngineData, EngineRenderer } from "./engine";
+import { EngineRenderer } from "./engine";
 
-export class EngineSVGRenderer<D extends EngineData> implements EngineRenderer<D> {
+export class EngineSVGRenderer<D> implements EngineRenderer<D> {
     svg: SVGSVGElement;
 
     constructor(svg: SVGSVGElement) {
         this.svg = svg;
     }
 
-    render(data: D | null): void {
+    render(_data: D | null): void {
     }
 }

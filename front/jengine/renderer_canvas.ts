@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { EngineData, EngineRenderer } from "./engine";
+import { EngineRenderer } from "./engine";
 
-export class EngineCanvasRenderer<D extends EngineData> implements EngineRenderer<D> {
+export class EngineCanvasRenderer<D> implements EngineRenderer<D> {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
@@ -27,6 +27,6 @@ export class EngineCanvasRenderer<D extends EngineData> implements EngineRendere
         this.ctx = canvas.getContext('2d')!;
     }
 
-    render(data: D | null): void {
+    render(_data: D | null): void {
     }
 }

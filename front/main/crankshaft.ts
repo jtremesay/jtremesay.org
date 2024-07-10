@@ -1,12 +1,12 @@
 import * as d3 from "d3"
-import { Engine, EngineData, EngineUpdater } from "../jengine/engine";
+import { Engine, EngineUpdater } from "../jengine/engine";
 
 
 const PIN_RADIUS = 10
 const PISTON_HEIGHT = PIN_RADIUS + 40
 const PISTON_RADIUS = 50
 
-class CrankShaftData implements EngineData {
+class CrankShaftData {
     crankshaft_radius: number
     rod_length: number
 
