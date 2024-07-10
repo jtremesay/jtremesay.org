@@ -8,15 +8,15 @@
     "build": "tsc && vite build"
   },
   "devDependencies": {
-    "django-vite-plugin": "^4.0.0",
-    "glob": "^10.3.15",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "django-vite-plugin": "^4.0.1",
+    "glob": "^10.4.5",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
     "@types/three": "^0.162.0",
-    "axios": "^1.6.8",
+    "axios": "^1.7.2",
     "d3": "^7.9.0",
     "three": "^0.162.0"
   }

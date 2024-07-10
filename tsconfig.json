@@ -19,7 +19,24 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@s:django_distill/*": [
+        "./.direnv/python-3.12/lib/python3.12/site-packages/django_distill/static/django_distill/*"
+      ],
+      "@t:django_distill/*": [
+        "./.direnv/python-3.12/lib/python3.12/site-packages/django_distill/templates/django_distill/*"
+      ],
+      "@s:jssg/*": [
+        "./jssg/static/jssg/*"
+      ],
+      "@t:jssg/*": [
+        "./jssg/templates/jssg/*"
+      ]
+    }
   },
   "include": [
     "front"
