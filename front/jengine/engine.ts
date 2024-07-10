@@ -60,6 +60,6 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
     }
 
     start() {
-        this.run(1 / 60)
+        this.run(1 * 1000 / 60)
     }
 }

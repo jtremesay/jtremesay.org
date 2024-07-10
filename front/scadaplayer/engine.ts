@@ -27,11 +27,10 @@ import { Point } from "./widgets/base/point"
 import { ScadaBoxInfo } from "./widgets/scadaplayer/scada_box_info"
 import { Size } from "./widgets/base/size"
 import { WindSpeedGauge } from "./widgets/scadaplayer/wind_speed_gauge"
-
-export class Engine {
+import { EngineUpdater } from "../jengine/engine"
+import { EngineCanvasRenderer } from "../jengine/renderer_canvas"
+export class ScadaPlayerData {
     metadata: Metadata
-    canvas: HTMLCanvasElement
-    ctx: CanvasRenderingContext2D
     dashboard: Dashboard
     simulation: Simulation
     last_time: number | null
@@ -40,10 +39,6 @@ export class Engine {
         this.metadata = metadata
         this.simulation = new Simulation(records)
         this.last_time = null
-        this.canvas = document.getElementById("canvas")! as HTMLCanvasElement
-        this.canvas.width = CANVAS_SIZE.width
-        this.canvas.height = CANVAS_SIZE.height
-        this.ctx = this.canvas.getContext("2d")! as CanvasRenderingContext2D
         this.dashboard = new Dashboard()
         this.dashboard.add_item(new MetadataBoxInfo(), new Size(2, 1), new Point(0, 0))
         this.dashboard.add_item(new ScadaBoxInfo(), new Size(2, 1), new Point(0, 1))
@@ -53,23 +48,34 @@ export class Engine {
         this.dashboard.add_item(new ActivePowerGauge(), new Size(2, 2), new Point(2, 4))
         this.dashboard.add_item(new WindSpeedGauge(), new Size(2, 2), new Point(4, 4))
     }
+}
 
-    render(time: DOMHighResTimeStamp) {
-        time /= 1000
-        if (this.last_time == null) {
-            this.last_time = time - 1 / 60
+export class ScadaPlayerUpdater implements EngineUpdater<ScadaPlayerData> {
+    update(data: ScadaPlayerData | null, time: DOMHighResTimeStamp): ScadaPlayerData | null {
+        if (data === null) {
+            return null
         }
-        let dt = time - this.last_time
-        this.last_time = time
 
-        this.simulation.update(dt)
-        this.dashboard.update(this.metadata, this.simulation)
-        this.dashboard.draw(this.ctx, CANVAS_SIZE)
+        time /= 1000
+        if (data.last_time == null) {
+            data.last_time = time - 1 / 60
+        }
+        let dt = time - data.last_time
+        data.last_time = time
 
-        this.request_frame()
+        data.simulation.update(dt)
+        data.dashboard.update(data.metadata, data.simulation)
+
+        return null
     }
+}
 
-    request_frame() {
-        window.requestAnimationFrame(this.render.bind(this))
+export class ScadaPlayerRenderer extends EngineCanvasRenderer<ScadaPlayerData> {
+    render(data: ScadaPlayerData | null): void {
+        if (data === null) {
+            return
+        }
+
+        data.dashboard.draw(this.ctx, CANVAS_SIZE)
     }
 }

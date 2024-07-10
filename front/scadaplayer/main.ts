@@ -2,7 +2,7 @@
  * Scadaplayer
  * Copyright (C) 2024 Jonathan Tremesaygues
  *
- * scadaplayer.ts
+ * main.ts
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,17 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { main } from "../scadaplayer/main"
+import { Engine } from "../jengine/engine"
+import { ScadaPlayerData, ScadaPlayerRenderer, ScadaPlayerUpdater } from "./engine"
+import { parse_scada } from "./parser"
 
-main()
+
+export function main() {
+    const metadata = JSON.parse((document.getElementById("metadata")! as HTMLTextAreaElement).value)
+    const records = parse_scada((document.getElementById("scada")! as HTMLTextAreaElement).value)
+    const data = new ScadaPlayerData(metadata, records)
+    const updater = new ScadaPlayerUpdater()
+    const renderer = new ScadaPlayerRenderer(document.getElementById("canvas")! as HTMLCanvasElement)
+    const engine = new Engine(updater, renderer, data)
+    engine.start()
+}
