@@ -95,7 +95,7 @@ class Demo1VectorSpace implements VectorSpace {
     }
 }
 
-function create_engine(vector_space: VectorSpace, canvas_id: string, updater: ParticleEngineUpdater, particles_count: number = 10000): Engine<ParticleEngineUpdater, ParticleEngineCanvasRenderer, ParticleData> {
+function create_engine(vector_space: VectorSpace, canvas_id: string, updater: ParticleEngineUpdater, particles_count: number = 10000): Engine<ParticleEngineUpdater, ParticleEngineCanvas2DRenderer, ParticleData> {
     let canvas = document.getElementById(canvas_id) as HTMLCanvasElement
     canvas.width = CANVAS_WIDTH
     canvas.height = CANVAS_HEIGHT
