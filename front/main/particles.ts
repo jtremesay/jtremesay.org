@@ -17,10 +17,11 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ParticleEngine } from "../particles/engine";
 import { VectorSpace, QuantifiedVectorSpace } from "../jengine/vector_space";
 import { Vector2 } from "../jengine/vector";
 import { clamp } from "../jengine/maths";
+import { Engine } from "../jengine/engine";
+import { ParticleData, ParticleEngineUpdater, ParticleEngineCanvasRenderer } from "../particles/engine";
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = CANVAS_WIDTH;
@@ -94,56 +95,27 @@ class Demo1VectorSpace implements VectorSpace {
     }
 }
 
+function create_engine(vector_space: VectorSpace, canvas_id: string, updater: ParticleEngineUpdater, particles_count: number = 10000): Engine<ParticleEngineUpdater, ParticleEngineCanvasRenderer, ParticleData> {
+    let canvas = document.getElementById(canvas_id) as HTMLCanvasElement
+    canvas.width = CANVAS_WIDTH
+    canvas.height = CANVAS_HEIGHT
+    let data = new ParticleData(
+        new QuantifiedVectorSpace(vector_space, CANVAS_WIDTH, CANVAS_HEIGHT),
+        CANVAS_WIDTH, CANVAS_HEIGHT, particles_count)
+    let renderer = new ParticleEngineCanvasRenderer(canvas)
+    let engine = new Engine(updater, renderer, data)
+
+    return engine
+}
+
 function main() {
-    // Direction simulation
-    new ParticleEngine(
-        new QuantifiedVectorSpace(
-            new CircleVectorSpace(),
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT
-        ),
-        "particles-canvas-direction", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
-    ).start();
-
-    // Intentensity simulation
-    new ParticleEngine(
-        new QuantifiedVectorSpace(
-            new GradientVectorSpace(),
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT
-        ),
-        "particles-canvas-intensity", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
-    ).start();
-
-    // Donut simulation
-    new ParticleEngine(
-        new QuantifiedVectorSpace(
-            new DonutVectorSpace(),
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT
-        ),
-        "particles-canvas-donut", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
-    ).start();
-
-    // Vortex simulation
-    new ParticleEngine(
-        new QuantifiedVectorSpace(
-            new VortexVectorSpace(),
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT
-        ),
-        "particles-canvas-vortex", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
-    ).start();
-
-    // Demo 1 simulation
-    new ParticleEngine(
-        new QuantifiedVectorSpace(
-            new Demo1VectorSpace(),
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT
-        ),
-        "particles-canvas-demo1", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
-    ).start();
+    const particles_count = 10000
+    let updater = new ParticleEngineUpdater() // Mutualize the updater
+    create_engine(new CircleVectorSpace(), "particles-canvas-direction", updater, particles_count).start()
+    create_engine(new GradientVectorSpace(), "particles-canvas-intensity", updater, particles_count).start()
+    create_engine(new DonutVectorSpace(), "particles-canvas-donut", updater, particles_count).start()
+    create_engine(new VortexVectorSpace(), "particles-canvas-vortex", updater, particles_count).start()
+    create_engine(new Demo1VectorSpace(), "particles-canvas-demo1", updater, particles_count).start()
 }
 
 main();
