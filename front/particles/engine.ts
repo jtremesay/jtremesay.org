@@ -19,7 +19,7 @@
 
 
 import { EngineUpdater } from "../jengine/engine";
-import { EngineCanvas2DRenderer, EngineCanvasWebGL2Renderer } from "../jengine/renderer_canvas";
+import { EngineCanvas2DRenderer, EngineCanvasWebGLRenderer } from "../jengine/renderer_canvas";
 import { Vector2 } from "../jengine/vector";
 import { VectorSpace } from "../jengine/vector_space";
 
@@ -105,6 +105,6 @@ export class ParticleEngineCanvas2DRenderer extends EngineCanvas2DRenderer<Parti
     }
 }
 
-export class ParticleEngineCanvasWebgl2Renderer extends EngineCanvasWebGL2Renderer<ParticleData> {
+export class ParticleEngineCanvasWebGLRenderer extends EngineCanvasWebGLRenderer<ParticleData> {
 
 }

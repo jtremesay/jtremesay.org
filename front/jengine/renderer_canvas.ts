@@ -31,13 +31,13 @@ export class EngineCanvas2DRenderer<D> implements EngineRenderer<D> {
     }
 }
 
-export class EngineCanvasWebGL2Renderer<D> implements EngineRenderer<D> {
+export class EngineCanvasWebGLRenderer<D> implements EngineRenderer<D> {
     canvas: HTMLCanvasElement;
-    ctx: WebGL2RenderingContext;
+    ctx: WebGLRenderingContext;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.ctx = canvas.getContext('webgl2')!;
+        this.ctx = canvas.getContext('webgl')!;
     }
 
     render(_data: D | null): void {
