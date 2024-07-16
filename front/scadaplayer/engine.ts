@@ -28,7 +28,7 @@ import { ScadaBoxInfo } from "./widgets/scadaplayer/scada_box_info"
 import { Size } from "./widgets/base/size"
 import { WindSpeedGauge } from "./widgets/scadaplayer/wind_speed_gauge"
 import { EngineUpdater } from "../jengine/engine"
-import { EngineCanvasRenderer } from "../jengine/renderer_canvas"
+import { EngineCanvas2DRenderer } from "../jengine/renderer_canvas"
 export class ScadaPlayerData {
     metadata: Metadata
     dashboard: Dashboard
@@ -70,7 +70,7 @@ export class ScadaPlayerUpdater implements EngineUpdater<ScadaPlayerData> {
     }
 }
 
-export class ScadaPlayerRenderer extends EngineCanvasRenderer<ScadaPlayerData> {
+export class ScadaPlayerRenderer extends EngineCanvas2DRenderer<ScadaPlayerData> {
     render(data: ScadaPlayerData | null): void {
         if (data === null) {
             return

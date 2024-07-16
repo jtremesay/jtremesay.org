@@ -18,13 +18,26 @@
  */
 import { EngineRenderer } from "./engine";
 
-export class EngineCanvasRenderer<D> implements EngineRenderer<D> {
+export class EngineCanvas2DRenderer<D> implements EngineRenderer<D> {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d')!;
+    }
+
+    render(_data: D | null): void {
+    }
+}
+
+export class EngineCanvasWebGL2Renderer<D> implements EngineRenderer<D> {
+    canvas: HTMLCanvasElement;
+    ctx: WebGL2RenderingContext;
+
+    constructor(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('webgl2')!;
     }
 
     render(_data: D | null): void {
