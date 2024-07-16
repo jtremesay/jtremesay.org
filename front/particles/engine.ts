@@ -22,6 +22,7 @@ import { EngineUpdater } from "../jengine/engine";
 import { EngineCanvas2DRenderer, EngineCanvasWebGLRenderer } from "../jengine/renderer_canvas";
 import { Vector2 } from "../jengine/vector";
 import { VectorSpace } from "../jengine/vector_space";
+import { init_shader_program } from "../jengine/webgl";
 
 export class ParticleData {
     vector_space: VectorSpace;
@@ -105,6 +106,73 @@ export class ParticleEngineCanvas2DRenderer extends EngineCanvas2DRenderer<Parti
     }
 }
 
-export class ParticleEngineCanvasWebGLRenderer extends EngineCanvasWebGLRenderer<ParticleData> {
+const VERTEX_SHADER_SOURCE = `
+attribute vec4 aVertexPosition;
 
+void main() {
+  gl_Position = aVertexPosition;
+}
+  `
+
+const FRAGMENT_SHADER = `
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+    }
+  `;
+
+export class ParticleEngineCanvasWebGLRenderer extends EngineCanvasWebGLRenderer<ParticleData> {
+    shader_program: WebGLProgram
+    vertex_position: GLint
+    position_buffer: WebGLBuffer
+
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas)
+
+        this.shader_program = init_shader_program(this.ctx, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER)!
+        this.vertex_position = this.ctx.getAttribLocation(this.shader_program, "aVertexPosition")
+        this.position_buffer = this.ctx.createBuffer()!
+        this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, this.position_buffer)
+        this.ctx.bufferData(this.ctx.ARRAY_BUFFER, new Float32Array([
+            -1.0, -1.0,
+            1.0, -1.0,
+            -1.0, 1.0,
+            1.0, 1.0,
+        ]), this.ctx.STATIC_DRAW)
+
+
+    }
+
+    render(data: ParticleData | null): void {
+        if (data === null) {
+            return
+        }
+
+        this.ctx.clearColor(0.0, 0.0, 0.0, 1.0)
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT)
+
+        const numComponents = 2; // pull out 2 values per iteration
+        const type = this.ctx.FLOAT; // the data in the buffer is 32bit floats
+        const normalize = false; // don't normalize
+        const stride = 0; // how many bytes to get from one set of values to the next
+        // 0 = use type and numComponents above
+        const offset = 0; // how many bytes inside the buffer to start from
+        this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, this.position_buffer);
+        this.ctx.vertexAttribPointer(
+            this.vertex_position,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset,
+        );
+        this.ctx.enableVertexAttribArray(this.vertex_position);
+        this.ctx.useProgram(this.shader_program);
+
+
+        {
+            const offset = 0;
+            const vertexCount = 4;
+            this.ctx.drawArrays(this.ctx.TRIANGLE_STRIP, offset, vertexCount);
+        }
+    }
 }
