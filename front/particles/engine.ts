@@ -19,6 +19,7 @@
 
 
 import { EngineRenderer, EngineUpdater } from "../jengine/engine";
+import { EngineCanvas2DRenderer } from "../jengine/renderer_canvas";
 import { Vector2 } from "../jengine/vector";
 import { VectorSpace } from "../jengine/vector_space";
 
@@ -66,13 +67,9 @@ export class ParticleEngineUpdater implements EngineUpdater<ParticleData> {
 
 }
 
-export class ParticleEngineCanvasRenderer implements EngineRenderer<ParticleData> {
-    canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
-
+export class ParticleEngineCanvas2DRenderer extends EngineCanvas2DRenderer<ParticleData> {
     constructor(canvas: HTMLCanvasElement) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d')!;
+        super(canvas)
     }
 
     render(data: ParticleData): void {

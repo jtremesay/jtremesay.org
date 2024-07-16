@@ -21,7 +21,7 @@ import { VectorSpace, QuantifiedVectorSpace } from "../jengine/vector_space";
 import { Vector2 } from "../jengine/vector";
 import { clamp } from "../jengine/maths";
 import { Engine } from "../jengine/engine";
-import { ParticleData, ParticleEngineUpdater, ParticleEngineCanvasRenderer } from "../particles/engine";
+import { ParticleData, ParticleEngineUpdater, ParticleEngineCanvas2DRenderer } from "../particles/engine";
 
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = CANVAS_WIDTH;
@@ -102,7 +102,7 @@ function create_engine(vector_space: VectorSpace, canvas_id: string, updater: Pa
     let data = new ParticleData(
         new QuantifiedVectorSpace(vector_space, CANVAS_WIDTH, CANVAS_HEIGHT),
         CANVAS_WIDTH, CANVAS_HEIGHT, particles_count)
-    let renderer = new ParticleEngineCanvasRenderer(canvas)
+    let renderer = new ParticleEngineCanvas2DRenderer(canvas)
     let engine = new Engine(updater, renderer, data)
 
     return engine
