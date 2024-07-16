@@ -17,36 +17,133 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ParticleData, ParticleRenderer, ParticleUpdater } from "../particles/engine";
-import { Engine } from "../jengine/engine";
+import { ParticleEngine } from "../particles/engine";
 import { VectorSpace, QuantifiedVectorSpace } from "../jengine/vector_space";
 import { Vector2 } from "../jengine/vector";
+import { clamp } from "../jengine/maths";
+
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = CANVAS_WIDTH;
 
 
-class MyVectorSpace implements VectorSpace {
+
+class DistanceToCenterVectorSpace implements VectorSpace {
     vector_at(x: number, y: number): Vector2 {
-        let p = new Vector2(x / 800, y / 600) // normalize
-        p = new Vector2(0.5, 0.5).sub(p) // distance to center, center attract
-        // apply a rotational force
-        const a = Math.PI / 2;
-        p = p.add(new Vector2(Math.cos(a) * p.x - Math.sin(a) * p.y, Math.sin(a) * p.x + Math.cos(a) * p.y));
+        let p = new Vector2(x / CANVAS_WIDTH, y / CANVAS_HEIGHT) // normalize
+        p = p.sub(new Vector2(0.5, 0.5)) // From center to border
+        return p
+    }
+}
+
+
+class CircleVectorSpace implements VectorSpace {
+    offset: number
+    distance_to: DistanceToCenterVectorSpace = new DistanceToCenterVectorSpace()
+
+    constructor(offset: number = 0) {
+        this.offset = offset
+    }
+
+
+    vector_at(x: number, y: number): Vector2 {
+        let p = this.distance_to.vector_at(x, y)
+        p = p.normalize() // normalize, so we only have the direction
+        p = p.mul(0.5) // reduce the magnitude
+        p = p.rotate_by(this.offset) // rotate
+        return p
+    }
+}
+
+class GradientVectorSpace implements VectorSpace {
+    vector_at(_x: number, y: number): Vector2 {
+        return new Vector2(1 - y / CANVAS_HEIGHT, 0)
+    }
+}
+
+
+class DonutVectorSpace implements VectorSpace {
+    distance_to = new DistanceToCenterVectorSpace()
+    radius = 0.35
+
+    vector_at(x: number, y: number): Vector2 {
+        let p = this.distance_to.vector_at(x, y)
+        if (p.mag() > this.radius) {
+            p = p.rotate_by(Math.PI)
+        }
+        return p
+    }
+}
+class VortexVectorSpace implements VectorSpace {
+    circle = new DistanceToCenterVectorSpace()
+
+    vector_at(x: number, y: number): Vector2 {
+        let p = this.circle.vector_at(x, y)
+        p = p.rotate_by(Math.PI / 3) // Rotatiion force
+        return p
+    }
+}
+
+class Demo1VectorSpace implements VectorSpace {
+    vector_at(x: number, y: number): Vector2 {
+        let p = new Vector2(1 - x / CANVAS_WIDTH, y / CANVAS_HEIGHT) // normalize
+        p = p.sub(new Vector2(0.5, 0.5)) // From center to border
+        p = p.rotate_by(-Math.PI * Math.sin(p.mag() + 2 * Math.sin(x / CANVAS_HEIGHT) + 4 * Math.sin(x / CANVAS_HEIGHT) + 8 * Math.sin(x / CANVAS_HEIGHT) + 16 * Math.sin(x / CANVAS_HEIGHT))) // rotate
+        p = p.rotate_by(2 * Math.PI * p.mag()) // rotate
+        p.y = clamp(1 / p.y, 0, 0.5)
         return p
     }
 }
 
 function main() {
-    const canvas = document.getElementById("particles-canvas")! as HTMLCanvasElement;
-    canvas.width = 800;
-    canvas.height = 600;
+    // Direction simulation
+    new ParticleEngine(
+        new QuantifiedVectorSpace(
+            new CircleVectorSpace(),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT
+        ),
+        "particles-canvas-direction", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
+    ).start();
 
+    // Intentensity simulation
+    new ParticleEngine(
+        new QuantifiedVectorSpace(
+            new GradientVectorSpace(),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT
+        ),
+        "particles-canvas-intensity", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
+    ).start();
 
-    const vector_space = new QuantifiedVectorSpace(new MyVectorSpace(), canvas.width, canvas.height);
-    const data = new ParticleData(vector_space, 10000);
-    const updater = new ParticleUpdater();
-    const renderer = new ParticleRenderer(canvas);
-    const engine = new Engine(updater, renderer, data);
-    engine.start();
+    // Donut simulation
+    new ParticleEngine(
+        new QuantifiedVectorSpace(
+            new DonutVectorSpace(),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT
+        ),
+        "particles-canvas-donut", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
+    ).start();
+
+    // Vortex simulation
+    new ParticleEngine(
+        new QuantifiedVectorSpace(
+            new VortexVectorSpace(),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT
+        ),
+        "particles-canvas-vortex", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
+    ).start();
+
+    // Demo 1 simulation
+    new ParticleEngine(
+        new QuantifiedVectorSpace(
+            new Demo1VectorSpace(),
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT
+        ),
+        "particles-canvas-demo1", 10000, CANVAS_WIDTH, CANVAS_HEIGHT
+    ).start();
 }
-
 
 main();

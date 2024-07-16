@@ -19,69 +19,52 @@
 
 
 import { Vector2 } from "../jengine/vector";
-import { EngineUpdater } from "../jengine/engine";
-import { EngineCanvasRenderer } from "../jengine/renderer_canvas";
 import { VectorSpace } from "../jengine/vector_space";
 
-export class Particle {
-    position: Vector2;
-    velocity: Vector2;
-    remaining_life: number;
-
-    constructor(position: Vector2, velocity: Vector2, remaining_life: number) {
-        this.position = position;
-        this.velocity = velocity;
-        this.remaining_life = remaining_life;
-    }
-}
-
-
-export class ParticleData {
+export class ParticleEngine {
     vector_space: VectorSpace;
-    particles: Particle[] = [];
+    last_time: DOMHighResTimeStamp = 0;
+    width: number;
+    height: number;
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    vector_space_ib: ImageBitmap | null = null
+    particles_count: number = 100
+    particles_lifes: number[] = []
+    particles_positions: Vector2[] = []
+    particles_velocities: Vector2[] = []
 
-    constructor(vector_space: VectorSpace, particles_count: number = 1000) {
+
+    constructor(vector_space: VectorSpace, canvas_id: string, particles_count: number = 100, width: number = 640, height: number = 640) {
         this.vector_space = vector_space;
-        for (let i = 0; i < particles_count; i++) {
-            const position = new Vector2(0, 0);
-            const velocity = new Vector2(0, 0);
-            const life = -1;
-            this.particles.push(new Particle(position, velocity, life));
-        }
+        this.width = width;
+        this.height = height;
+        this.canvas = document.getElementById(canvas_id) as HTMLCanvasElement;
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.ctx = this.canvas.getContext("2d")!;
+
+        this.particles_count = particles_count
+        this.particles_lifes = Array.from({ length: particles_count }, () => -1)
+        this.particles_positions = Array.from({ length: particles_count }, () => new Vector2(0, 0))
+        this.particles_velocities = Array.from({ length: particles_count }, () => new Vector2(0, 0))
     }
-}
 
-export class ParticleUpdater implements EngineUpdater<ParticleData> {
-    update(data: ParticleData | null, dt: DOMHighResTimeStamp): ParticleData | null {
-        if (data === null) {
-            return null
-        }
-
-        for (const particle of data.particles) {
-            if (particle.remaining_life <= 0 || particle.position.x < 0 || particle.position.x > 800 || particle.position.y < 0 || particle.position.y > 600) {
-                particle.position = new Vector2(Math.random() * 800, Math.random() * 600);
-                particle.velocity = new Vector2(0, 0);
-                particle.remaining_life = Math.random() * 60;
+    update(dt: number) {
+        for (let i = 0; i < this.particles_count; i++) {
+            if (this.particles_lifes[i] <= 0 || this.particles_positions[i].x < 0 || this.particles_positions[i].x > this.width || this.particles_positions[i].y < 0 || this.particles_positions[i].y > this.height) {
+                this.particles_positions[i] = new Vector2(Math.random() * this.width, Math.random() * this.height);
+                this.particles_velocities[i] = new Vector2(Math.random(), Math.random());
+                this.particles_lifes[i] = 30 + Math.random() * 60;
             } else {
-                particle.velocity = particle.velocity.add(data.vector_space.vector_at(particle.position.x, particle.position.y).mul(dt));
-                particle.position = particle.position.add(particle.velocity.mul(dt));
-                particle.remaining_life -= 1 * dt;
+                this.particles_velocities[i] = this.particles_velocities[i].add(this.vector_space.vector_at(this.particles_positions[i].x, this.particles_positions[i].y).mul(dt));
+                this.particles_positions[i] = this.particles_positions[i].add(this.particles_velocities[i].mul(dt));
+                this.particles_lifes[i] -= 1 * dt;
             }
         }
-
-        return null
     }
-}
 
-export class ParticleRenderer extends EngineCanvasRenderer<ParticleData> {
-    vector_space_ib: ImageBitmap | null = null
-
-
-    render(data: ParticleData | null): void {
-        if (data === null) {
-            return
-        }
-
+    render() {
         if (this.vector_space_ib === null) {
             let vs_canvas = new OffscreenCanvas(this.canvas.width, this.canvas.height)
             let vs_ctx = vs_canvas.getContext("2d")!
@@ -89,8 +72,8 @@ export class ParticleRenderer extends EngineCanvasRenderer<ParticleData> {
             // Draw each vector of the field
             for (let x = 0; x < this.canvas.width; x++) {
                 for (let y = 0; y < this.canvas.height; y++) {
-                    const vector = data.vector_space.vector_at(x, y)
-                    vs_ctx.fillStyle = `hsl(${vector.angle() * 180 / Math.PI}, 50%, ${(1 - vector.mag()) * 100}%)`
+                    const vector = this.vector_space.vector_at(x, y)
+                    vs_ctx.fillStyle = `hsl(${vector.angle() * 180 / Math.PI}, 50%, ${(vector.mag()) * 100}%)`
                     vs_ctx.fillRect(x, y, 1, 1)
                 }
             }
@@ -102,10 +85,25 @@ export class ParticleRenderer extends EngineCanvasRenderer<ParticleData> {
 
         this.ctx.fillStyle = "black"
         this.ctx.strokeStyle = "white"
-        const particle_size = 2
-        for (const particle of data.particles) {
-            this.ctx.fillRect(particle.position.x, particle.position.y, particle_size, particle_size)
-            this.ctx.strokeRect(particle.position.x, particle.position.y, particle_size, particle_size)
+        const particle_size = 1
+        for (const position of this.particles_positions) {
+            this.ctx.fillRect(position.x, position.y, particle_size, particle_size)
+            this.ctx.strokeRect(position.x, position.y, particle_size, particle_size)
         }
+    }
+
+    run(timestamp: DOMHighResTimeStamp = 0) {
+        const dt = (timestamp - this.last_time) / 1000;
+        this.last_time = timestamp;
+
+        this.update(dt);
+        this.render();
+
+        window.requestAnimationFrame(this.run.bind(this));
+    }
+
+    start() {
+        this.last_time = 0
+        this.run(0)
     }
 }

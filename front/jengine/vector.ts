@@ -64,4 +64,11 @@ export class Vector2 {
     angle(): number {
         return Math.atan2(this.y, this.x);
     }
+
+    rotate_by(a: number): Vector2 {
+        return new Vector2(
+            this.x * Math.cos(a) - this.y * Math.sin(a),
+            this.x * Math.sin(a) + this.y * Math.cos(a)
+        );
+    }
 }
