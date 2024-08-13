@@ -14,34 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-FROM ubuntu:noble AS site
 
-# Update packages and install needed stuff
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends npm python3-pip python3-venv \
-    && rm -rf /var/lib/apt/lists/*
-
+FROM node:current-alpine AS front
 WORKDIR /code
+COPY package.json package-lock.json ./
+RUN npm install
+COPY tsconfig.json vite.config.ts ./
+COPY front/ front/
+RUN npm run build
 
-# Create venv
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install python & node deps
-COPY requirements.txt package.json package-lock.json ./
-RUN pip install -Ur requirements.txt \
-    && npm install
-
-# Copy source dir
-COPY manage.py tsconfig.json vite.config.ts ./
+FROM python:3-slim AS site
+WORKDIR /code
+COPY requirements.txt ./
+RUN pip install -Ur requirements.txt
+COPY manage.py ./
 COPY jssg/ jssg/
 COPY content/ content/
-COPY front/ front/
-
-# Build
-RUN npm run build \
-    && ./manage.py distill-local --collectstatic --force dist
+COPY --from=front /code/static/ static/
+RUN ./manage.py distill-local --collectstatic --force dist
 
 FROM nginx:mainline-alpine
 COPY --from=site /code/dist/ /usr/share/nginx/html/
