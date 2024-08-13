@@ -1,2 +1,2 @@
-django-vite==3.0.4
+django_vite
 --editable jssg
