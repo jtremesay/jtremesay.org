@@ -2,13 +2,13 @@
 title: Images générés par ordinateur
 slug: cgi
 ---
-{% load vite %}
+{% load django_vite %}
 
 Quelques expérimentations avec la création d'images par ordinateur.
 
 Ici, un [triangle de Sierpinski](https://fr.wikipedia.org/wiki/Triangle_de_Sierpi%C5%84ski>) généré dans une image SVG avec du vanilla typescript.
 
-{% vite 'front/main/cgi.ts' %}
+{% vite_asset 'front/main/cgi.ts' %}
 
 <div id="sierpinski">
     <p>

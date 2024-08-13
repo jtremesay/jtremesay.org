@@ -17,6 +17,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'vite/modulepreload-polyfill';
 import { main } from "../scadaplayer/main"
 
 main()

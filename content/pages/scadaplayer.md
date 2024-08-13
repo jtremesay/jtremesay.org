@@ -1,7 +1,7 @@
 ---
 title: Scadaplayer
 ---
-{% load vite %}
+{% load django_vite %}
 
 Un truc much en vanilla TS pour visualiser les données issues d'une éolienne.
 
@@ -9,7 +9,7 @@ Les données sont issus de l'éolienne R80711 (une Senvion MM82 de puissance nom
 
 Le dataset était initialement disponible en opendata là https://opendata-renewables.engie.com, mais le site est maintenant mort :(
 
-{% vite 'front/main/scadaplayer.ts' %}
+{% vite_asset 'front/main/scadaplayer.ts' %}
 <div id="scadaplayer">
     <canvas id="canvas" width="1920" height="1080"></canvas>
     <p>

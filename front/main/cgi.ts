@@ -17,6 +17,9 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+import 'vite/modulepreload-polyfill';
+
 function sierpinski_create_triangle(level: number): SVGElement {
     if (level <= 0) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path")

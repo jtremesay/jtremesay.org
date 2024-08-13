@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+import 'vite/modulepreload-polyfill';
 let app = document.getElementById("app")!
 let canvas = app.querySelector("canvas[name=canvas]")! as HTMLCanvasElement
 let samples_count_input = app.querySelector("input[name=samples_count]")! as HTMLInputElement

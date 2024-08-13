@@ -51,17 +51,10 @@ export class ScadaPlayerData {
 }
 
 export class ScadaPlayerUpdater implements EngineUpdater<ScadaPlayerData> {
-    update(data: ScadaPlayerData | null, time: DOMHighResTimeStamp): ScadaPlayerData | null {
+    update(data: ScadaPlayerData | null, dt: number): ScadaPlayerData | null {
         if (data === null) {
             return null
         }
-
-        time /= 1000
-        if (data.last_time == null) {
-            data.last_time = time - 1 / 60
-        }
-        let dt = time - data.last_time
-        data.last_time = time
 
         data.simulation.update(dt)
         data.dashboard.update(data.metadata, data.simulation)

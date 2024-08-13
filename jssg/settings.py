@@ -53,16 +53,14 @@ JSSG_STATIC_DIR = JSSG_CONTENT_DIR / "static"
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
-    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django_distill",
-    "django_vite_plugin",
+    "django_vite",
     "jssg",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
 ]
 
@@ -104,10 +102,9 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = []
 
 STORAGES = {
-    # ...
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.ManifestStaticFilesStorage",
-    },
+        "BACKEND": "jssg.storage.ViteManifestStaticFilesStorage",
+    }
 }
 
 
@@ -135,11 +132,4 @@ STATICFILES_DIRS = [JSSG_STATIC_DIR]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-VITE_MANIFEST_FILE = STATIC_ROOT / ".vite" / "manifest.json"
-if not DEBUG and not VITE_MANIFEST_FILE.exists():
-    VITE_MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
-    VITE_MANIFEST_FILE.write_text("{}")
-
-DJANGO_VITE_PLUGIN = {
-    "MANIFEST": VITE_MANIFEST_FILE,
-}
+DJANGO_VITE = {"default": {"dev_mode": DEBUG}}

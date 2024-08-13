@@ -1,8 +1,8 @@
 ---
 title: Freeflow
 ---
-{% load vite %}
-{% vite 'front/main/freeflow.ts' %}
+{% load django_vite %}
+{% vite_asset 'front/main/freeflow.ts' %}
 
 Un clone de [Flow Free®](https://www.bigduckgames.com/flowfree) en D3.js + SVG.
 

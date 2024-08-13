@@ -1,12 +1,12 @@
 ---
 title: Tris animés
 ---
-{% load vite %}
+{% load django_vite %}
 
 Un truc much en vanilla TS pour visualiser différents algos de tris.
 
 
-{% vite 'front/main/sorts.ts' %}
+{% vite_asset 'front/main/sorts.ts' %}
 <div id="app">
     <div>
         <label>

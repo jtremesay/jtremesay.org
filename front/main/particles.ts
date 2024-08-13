@@ -17,6 +17,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'vite/modulepreload-polyfill';
 import { VectorSpace, QuantifiedVectorSpace } from "../jengine/vector_space";
 import { Vector2 } from "../jengine/vector";
 import { clamp } from "../jengine/maths";

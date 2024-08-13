@@ -1,7 +1,7 @@
 ---
 title: Raycaster
 ---
-{% load vite %}
+{% load django_vite %}
 Un petit raycaster écrit en pur typescript sans aucune dépendance externe.
 
 Le moteur de rendu émet des commandes de dessins qui sont exécuté par les différents backend afin de supporter plusieurs type d'affichage. Par exemple, ici, le moteur utilise deux backends pour dessiner dans un Canvas 2D et dans un SVG.
@@ -14,7 +14,7 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
 
 
 
-{% vite 'front/main/raycaster.ts' %}
+{% vite_asset 'front/main/raycaster.ts' %}
 <div id="raycaster" class="rc">
     <table border="solid">
         <thead>

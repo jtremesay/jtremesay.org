@@ -1,3 +1,5 @@
+import 'vite/modulepreload-polyfill';
+
 import * as d3 from "d3"
 import { Engine, EngineUpdater } from "../jengine/engine";
 
@@ -7,6 +9,7 @@ const PISTON_HEIGHT = PIN_RADIUS + 40
 const PISTON_RADIUS = 50
 
 class CrankShaftData {
+    clock: number = 0
     crankshaft_radius: number
     rod_length: number
 
@@ -81,7 +84,9 @@ class CrankShaftUpdater implements EngineUpdater<CrankShaftData> {
             return null
         }
 
-        let theta = dt / 1000
+        data.clock += dt
+
+        let theta = data.clock
 
         let tdc_y = data.crankshaft_radius + data.rod_length
         let piston_y = -(data.crankshaft_radius * Math.cos(theta) + Math.sqrt(Math.pow(data.rod_length, 2) - Math.pow(data.crankshaft_radius, 2) * Math.pow(Math.sin(theta), 2)))

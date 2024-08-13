@@ -3,8 +3,8 @@ title: Particules dans un champs vectoriel
 slug: particles
 ---
 {% load static %}
-{% load vite %}
-{% vite 'front/main/particles.ts' %}
+{% load django_vite %}
+{% vite_asset 'front/main/particles.ts' %}
 
 Des particules se promenant dans un champs vectoriel. 
 

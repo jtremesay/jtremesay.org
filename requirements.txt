@@ -1,5 +1,4 @@
-Django==5.0.6
+Django==5.1.0
 django-distill==3.2.4
-django_vite_plugin==3.0.1
-markdown2[all]==2.4.13
-whitenoise[brotli]==6.7.0
+ django-vite==3.0.4
+markdown2[all]==2.5.0
