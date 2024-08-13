@@ -26,10 +26,12 @@ RUN npm run build
 FROM python:3-slim AS site
 WORKDIR /code
 COPY requirements.txt ./
+COPY jssg/ jssg/
 RUN pip install -Ur requirements.txt
 COPY manage.py ./
-COPY jssg/ jssg/
+COPY proj/ proj/
 COPY content/ content/
+COPY jtremesay/ jtremesay/
 COPY --from=front /code/static/ static/
 RUN ./manage.py distill-local --collectstatic --force dist
 

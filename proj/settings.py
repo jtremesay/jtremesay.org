@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django_distill",
     "django_vite",
     "jssg",
+    "jtremesay",
 ]
 
 MIDDLEWARE = [
@@ -64,7 +65,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
 ]
 
-ROOT_URLCONF = "jssg.urls"
+ROOT_URLCONF = "proj.urls"
 
 TEMPLATES = [
     {
@@ -81,8 +82,8 @@ TEMPLATES = [
 ]
 
 # Do we really need this?
-ASGI_APPLICATION = "jssg.asgi.application"
-WSGI_APPLICATION = "jssg.wsgi.application"
+ASGI_APPLICATION = "proj.asgi.application"
+WSGI_APPLICATION = "proj.wsgi.application"
 
 
 # Database
@@ -103,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = []
 
 STORAGES = {
     "staticfiles": {
-        "BACKEND": "jssg.storage.ViteManifestStaticFilesStorage",
+        "BACKEND": "jtremesay.storage.ViteManifestStaticFilesStorage",
     }
 }
 

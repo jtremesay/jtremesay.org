@@ -1,0 +1,3 @@
+[submodule "jssg"]
+	path = jssg
+	url = git@github.com:jtremesay/jssg.git

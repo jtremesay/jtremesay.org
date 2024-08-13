@@ -12,9 +12,18 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-from django.apps import AppConfig
+"""WSGI config for proj project.
 
+It exposes the WSGI callable as a module-level variable named ``application``.
 
-class JssgConfig(AppConfig):
-    default_auto_field = "django.db.models.BigAutoField"
-    name = "jssg"
+For more information on this file, see
+https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
+"""
+
+import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "proj.settings")
+
+application = get_wsgi_application()

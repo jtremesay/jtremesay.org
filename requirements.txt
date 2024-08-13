@@ -1,4 +1,2 @@
-Django==5.1.0
-django-distill==3.2.4
- django-vite==3.0.4
-markdown2[all]==2.5.0
+django-vite==3.0.4
+--editable jssg
