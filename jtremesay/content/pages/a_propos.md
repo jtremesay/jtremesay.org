@@ -11,6 +11,6 @@ Contact
 
 Vous pouvez m'envoyer un [e-mail](mailto:jonathan.tremesaygues++contact@slaanesh.org). Je réponds selon ma motivation, mais promis, je fini par tout lire !
 
-Ma clé GPG est disponible là : [jonathan.tremesaygues@slaanesh.org.pub.asc]({% static 'files/jonathan.tremesaygues_at_slaanesh.org.pub.asc' %}) (id [0xB332E6AC45A21458835F9CAF7B83179210157613](http://keyserver.ubuntu.com/pks/lookup?search=B332E6AC45A21458835F9CAF7B83179210157613&fingerprint=on&op=index)).
+Ma clé GPG est disponible là : [jonathan.tremesaygues@slaanesh.org.pub.asc]({% static 'jtremesay/files/jonathan.tremesaygues_at_slaanesh.org.pub.asc' %}) (id [0xB332E6AC45A21458835F9CAF7B83179210157613](http://keyserver.ubuntu.com/pks/lookup?search=B332E6AC45A21458835F9CAF7B83179210157613&fingerprint=on&op=index)).
 
 Solidairement, Jo

@@ -163,7 +163,7 @@ Inclusion d'une web app :
 ```markdown
 {% verbatim %}
 {% vite_asset 'front/main/crankshaft.ts' %}
-{% static 'jss/css/crankshaft.css' %}
+{% static 'jtremesay/jss/css/crankshaft.css' %}
 <div id="crankshaft-app"></div>
 {% endverbatim %}
 ```

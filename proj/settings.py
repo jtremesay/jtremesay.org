@@ -42,14 +42,6 @@ DEBUG = environ.get("DJANGO_DEBUG", "false") == "true"
 
 ALLOWED_HOSTS = ["jtremesay.org", "localhost"]
 
-
-# JSSG
-JSSG_CONTENT_DIR = BASE_DIR / "content"
-JSSG_PAGES_DIR = JSSG_CONTENT_DIR / "pages"
-JSSG_POSTS_DIR = JSSG_CONTENT_DIR / "posts"
-JSSG_TEMPLATES_DIR = JSSG_CONTENT_DIR / "templates"
-JSSG_STATIC_DIR = JSSG_CONTENT_DIR / "static"
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -71,7 +63,7 @@ ROOT_URLCONF = "proj.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [JSSG_TEMPLATES_DIR],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,7 +119,6 @@ STATIC_URL = "/static/"
 
 DIST_DIR = BASE_DIR / "dist"
 STATIC_ROOT = BASE_DIR / "static"
-STATICFILES_DIRS = [JSSG_STATIC_DIR]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

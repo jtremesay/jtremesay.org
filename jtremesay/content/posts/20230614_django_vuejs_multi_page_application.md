@@ -249,8 +249,8 @@ Vous pouvez maintenant importer le javascript dans votre template :
 {% extends "myapp/base.html" %}
 
 {% block content %}
-    <script src="{% static 'front/ma_page.js' %}" type="module"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'front/assets/ma_page.css' %}" />
+    <script src="{% static 'jtremesay/front/ma_page.js' %}" type="module"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'jtremesay/front/assets/ma_page.css' %}" />
 
     <div id="ma_page" data-api-url="{% url 'app:api.json' %}"></div>
 {% endblock %}

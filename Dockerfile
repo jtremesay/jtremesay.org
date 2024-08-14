@@ -30,7 +30,6 @@ COPY jssg/ jssg/
 RUN pip install -Ur requirements.txt
 COPY manage.py ./
 COPY proj/ proj/
-COPY content/ content/
 COPY jtremesay/ jtremesay/
 COPY --from=front /code/static/ static/
 RUN ./manage.py distill-local --collectstatic --force dist

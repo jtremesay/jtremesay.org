@@ -24,12 +24,12 @@ from jssg.models import Page, Post
 
 def get_pages() -> Iterable[dict[str, Any]]:
     """Get available pages."""
-    return ({"slug": p.slug} for p in Page.load_glob())
+    return ({"slug": p.slug} for p in Page.load_pages_from_apps())
 
 
 def get_posts():
     """Get available posts."""
-    return ({"slug": p.slug} for p in Post.load_glob())
+    return ({"slug": p.slug} for p in Post.load_posts_from_apps())
 
 
 urlpatterns = [

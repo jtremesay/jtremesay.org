@@ -5,4 +5,4 @@ title: Doom
 {% load django_vite %}
 {% vite_asset 'front/main/doom.ts' %}
 
-<div class="doom" data-wad-url="{% static 'doom/doom1.wad' %}"></div>
+<div class="doom" data-wad-url="{% static 'jtremesay/doom/doom1.wad' %}"></div>
