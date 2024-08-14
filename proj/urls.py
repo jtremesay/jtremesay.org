@@ -19,17 +19,17 @@ from typing import Any
 from django_distill import distill_path
 
 from jssg import views
-from jssg.models import Page, Post
+from jssg.models import find_pages, find_posts
 
 
 def get_pages() -> Iterable[dict[str, Any]]:
     """Get available pages."""
-    return ({"slug": p.slug} for p in Page.load_pages_from_apps())
+    return ({"slug": p.slug} for p in find_pages())
 
 
 def get_posts():
     """Get available posts."""
-    return ({"slug": p.slug} for p in Post.load_posts_from_apps())
+    return ({"slug": p.slug} for p in find_posts())
 
 
 urlpatterns = [
