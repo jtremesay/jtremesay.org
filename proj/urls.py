@@ -13,40 +13,7 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from collections.abc import Iterable
-from typing import Any
+from jssg.utils import jssg_urls
 
-from django_distill import distill_path
-
-from jssg import views
-from jssg.models import find_pages, find_posts
-
-
-def get_pages() -> Iterable[dict[str, Any]]:
-    """Get available pages."""
-    return ({"slug": p.slug} for p in find_pages())
-
-
-def get_posts():
-    """Get available posts."""
-    return ({"slug": p.slug} for p in find_posts())
-
-
-urlpatterns = [
-    distill_path(
-        "", views.IndexView.as_view(), name="index", distill_file="index.html"
-    ),
-    distill_path("atom.xml", views.PostFeedsView(), name="atom_feed"),
-    distill_path(
-        "pages/<slug:slug>.html",
-        views.PageView.as_view(),
-        name="page",
-        distill_func=get_pages,
-    ),
-    distill_path(
-        "posts/<slug:slug>.html",
-        views.PostView.as_view(),
-        name="post",
-        distill_func=get_posts,
-    ),
-]
+urlpatterns = []
+urlpatterns += jssg_urls()

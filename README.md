@@ -20,7 +20,8 @@ $ pip install -Ur requirements.txt
 ## Dev
 
 ```shell
-$ npm run dev &
+$ npm run dev 
+# (in other shell)
 $ ./manage.py runserver
 ```
 
@@ -28,12 +29,13 @@ $ ./manage.py runserver
 
 ```shell
 $ npm run build
-$ ./manage.py collectstatic --no-input
-$ ./manage.py gensite
+$ ./manage.py distill-local --collectstatic --force dist
 ```
 
 Or, if you prefer docker
 
 ```shell
-$ docker build -t jssg .
+$ make docker-image
 ```
+
+(`make` for building and runnnig the image)
