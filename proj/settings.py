@@ -126,3 +126,6 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DJANGO_VITE = {"default": {"dev_mode": DEBUG}}
+
+JSSG_RSS_LINK = "https://jtremesay.org"
+JSSG_RSS_TITLE = "jtremesay.org - last articles"
