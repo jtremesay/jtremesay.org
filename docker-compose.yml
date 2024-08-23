@@ -29,6 +29,9 @@ services:
       - "traefik.http.routers.jtremesay.service=jtremesay"
       - "traefik.http.routers.jtremesay.tls.certresolver=leresolver"
       - "traefik.http.services.jtremesay.loadbalancer.server.port=80"
+    deploy:
+      labels:
+        - shepherd.autodeploy=false
 
 networks:
   traefik_public:
