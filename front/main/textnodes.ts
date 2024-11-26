@@ -19,8 +19,7 @@
  */
 import 'vite/modulepreload-polyfill';
 import { Vector2 } from '../jengine/vector';
-import { Engine, EngineUpdater } from '../jengine/engine';
-import { EngineCanvas2DRenderer } from '../jengine/renderer_canvas';
+import { BaseEngine, } from '../jengine/engine';
 
 const FONT: string = "30px Arial";
 
@@ -31,119 +30,102 @@ class Particle {
     }
 }
 
-class GNData {
-    particles: Particle[] = [];
-    text_size: Vector2 | null = null;
-    mouse_position: Vector2 | null = null;
-}
-
-class GNUpdater implements EngineUpdater<GNData> {
-
-    text: string | null = null;
+class GNEngine extends BaseEngine {
+    input: HTMLInputElement;
+    headless_canvas: HTMLCanvasElement = document.createElement("canvas");
+    headless_ctx: CanvasRenderingContext2D = this.headless_canvas.getContext("2d")!;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    out_canvas: HTMLCanvasElement;
+
+    particles: Particle[] = [];
     mouse_position: Vector2 | null = null;
 
     constructor(input: HTMLInputElement, canvas: HTMLCanvasElement) {
+        super();
+        this.input = input;
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d")!;
         input.addEventListener("input", this.on_input.bind(this));
-        this.text = input.value;
-
-        this.canvas = document.createElement("canvas");
-        this.ctx = this.canvas.getContext("2d")!;
-
-        this.out_canvas = canvas;
         canvas.addEventListener("mousemove", this.on_mousemove.bind(this));
+        canvas.addEventListener("mouseleave", this.on_mousseleave.bind(this));
+        this.set_text(input.value);
     }
+
 
     on_input(event: Event) {
-        this.text = (event.target as HTMLInputElement).value;
+        const text = (event.target as HTMLInputElement).value;
+        this.set_text(text);
+
     }
 
+    set_text(text: string) {
+        // Get the size of the bounding box
+        this.headless_ctx.font = FONT;
+        const textMetrics = this.headless_ctx.measureText(text);
+        const width = Math.ceil(textMetrics.width);
+        const height = Math.ceil(textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent);
+
+        // Resize the canvas to the bounding box
+        this.headless_canvas.width = width;
+        this.headless_canvas.height = height;
+        this.canvas.width = width * 10;
+        this.canvas.height = height * 10;
+
+        // Draw the text
+        this.headless_ctx.font = "30px Arial";
+        this.headless_ctx.fillStyle = "black";
+        this.headless_ctx.textAlign = "center";
+        this.headless_ctx.textBaseline = "middle";
+        this.headless_ctx.fillText(text, width / 2, height / 2);
+
+        // Read the pixels
+        const imageData = this.headless_ctx.getImageData(0, 0, width, height);
+        const pixels_data = imageData.data;
+
+        this.particles = [];
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const index = (y * width + x) * 4;
+                const r = pixels_data[index];
+                const g = pixels_data[index + 1];
+                const b = pixels_data[index + 2];
+                const a = pixels_data[index + 3];
+                // Fun fact: firefox use the alpha channel
+                // instead of the rgb channels to render the text
+                // so basically, all pixels are (0, 0, 0, a)
+                // where a is the alpha value of the pixel
+                // No idea if this tricks is used by the other browsers.
+                // So we just filter on any non null channel value
+                const val = Math.max(r, g, b, a);
+                if (val > 0) {
+                    this.particles.push(new Particle(new Vector2(x, y)));
+                }
+            }
+        }
+    }
+
+
     on_mousemove(event: MouseEvent) {
-        const rect = this.out_canvas.getBoundingClientRect();
-
-
+        const rect = this.canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         this.mouse_position = new Vector2(x, y);
     }
 
-    update(data: GNData | null, _dt: DOMHighResTimeStamp): GNData | null {
-        if (!data) {
-            return null;
-        }
-
-
-        if (this.text) {
-            // Get the size of the bounding box
-            this.ctx.font = FONT;
-            const textMetrics = this.ctx.measureText(this.text);
-            const width = Math.ceil(textMetrics.width);
-            const height = Math.ceil(textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent);
-            data.text_size = new Vector2(width, height);
-
-            // Resize the canvas to the bounding box
-            this.canvas.width = width;
-            this.canvas.height = height;
-
-
-            // Draw the text
-            this.ctx.font = "30px Arial";
-            this.ctx.fillStyle = "black";
-            this.ctx.textAlign = "center";
-            this.ctx.textBaseline = "middle";
-            this.ctx.fillText(this.text, width / 2, height / 2);
-            this.text = null;
-
-            // Read the pixels
-            const imageData = this.ctx.getImageData(0, 0, width, height);
-            const pixels_data = imageData.data;
-
-            data.particles = [];
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    const index = (y * width + x) * 4;
-                    const r = pixels_data[index];
-                    const g = pixels_data[index + 1];
-                    const b = pixels_data[index + 2];
-                    const a = pixels_data[index + 3];
-                    // Fun fact: firefox use the alpha channel
-                    // instead of the rgb channels to render the text
-                    // so basically, all pixels are (0, 0, 0, a)
-                    // where a is the alpha value of the pixel
-                    // No idea if this tricks is used by the other browsers.
-                    // So we just filter on any non null channel value
-                    const val = Math.max(r, g, b, a);
-                    if (val > 0) {
-                        data.particles.push(new Particle(new Vector2(x, y)));
-                    }
-                }
-            }
-        }
-
-        return data;
+    on_mousseleave() {
+        this.mouse_position = null;
     }
-}
 
+    update(_dt: number): void {
 
-class GNRenderer extends EngineCanvas2DRenderer<GNData> {
-    render(data: GNData | null): void {
-        if (data === null) {
-            return
-        }
+    }
 
-        if (data.text_size) {
-            this.canvas.width = data.text_size.x * 10;
-            this.canvas.height = data.text_size.y * 10;
-            data.text_size = null;
-        }
-
+    render(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.beginPath();
         this.ctx.fillStyle = "black";
-        for (const particle of data.particles) {
+        for (const particle of this.particles) {
             // Draw circles
             this.ctx.moveTo(particle.origin.x * 10 + 5, particle.origin.y * 10 + 5);
             this.ctx.arc(particle.origin.x * 10 + 5, particle.origin.y * 10 + 5, 5, 0, 2 * Math.PI);
@@ -152,16 +134,10 @@ class GNRenderer extends EngineCanvas2DRenderer<GNData> {
     }
 }
 
-function create_engine(): Engine<GNUpdater, GNRenderer, GNData> {
-    const canvas = document.querySelector("#textnodes-canvas") as HTMLCanvasElement;
-    const data = new GNData();
-    const updater = new GNUpdater(document.querySelector("#textnodes-input")!, canvas);
-    const renderer = new GNRenderer(canvas);
-    return new Engine(updater, renderer, data);
-}
+
 
 function main() {
-    const engine = create_engine();
+    const engine = new GNEngine(document.querySelector("#textnodes-input")!, document.querySelector("#textnodes-canvas")!);
     engine.start();
 }
 
