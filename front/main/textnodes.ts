@@ -25,8 +25,38 @@ const FONT: string = "30px Arial";
 
 class Particle {
     origin: Vector2;
+    position: Vector2;
+    acceleration: Vector2 = new Vector2(0, 0);
+    velocity: Vector2 = new Vector2(0, 0);
+
     constructor(origin: Vector2) {
         this.origin = origin;
+        this.position = origin;
+    }
+
+    update(dt: number, mouse_position: Vector2 | null) {
+        // Two forces : repulsion from the mouse and spring to the origin
+
+        // Repulsion from the mouse
+        let repulsion = new Vector2(0, 0);
+        if (mouse_position) {
+            const distance = mouse_position.sub(this.position);
+            const distance_mag = distance.mag();
+            if (distance_mag < 10) {
+                repulsion = distance.normalize().mul(1 / distance_mag).mul(-1);
+            }
+        }
+
+        // Spring to the origin
+        const spring = this.origin.sub(this.position).mul(0.1);
+
+        // Resulting force
+        const force = spring.mul(10).add(repulsion.mul(10));
+
+        this.acceleration = force;
+        this.velocity = this.velocity.add(this.acceleration.mul(dt));
+        this.position = this.position.add(this.velocity.mul(dt));
+
     }
 }
 
@@ -55,7 +85,6 @@ class GNEngine extends BaseEngine {
     on_input(event: Event) {
         const text = (event.target as HTMLInputElement).value;
         this.set_text(text);
-
     }
 
     set_text(text: string) {
@@ -109,15 +138,17 @@ class GNEngine extends BaseEngine {
         const rect = this.canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-        this.mouse_position = new Vector2(x, y);
+        this.mouse_position = new Vector2(x / 10, y / 10);
     }
 
     on_mousseleave() {
         this.mouse_position = null;
     }
 
-    update(_dt: number): void {
-
+    update(dt: number): void {
+        for (const particle of this.particles) {
+            particle.update(dt, this.mouse_position);
+        }
     }
 
     render(): void {
@@ -127,8 +158,8 @@ class GNEngine extends BaseEngine {
         this.ctx.fillStyle = "black";
         for (const particle of this.particles) {
             // Draw circles
-            this.ctx.moveTo(particle.origin.x * 10 + 5, particle.origin.y * 10 + 5);
-            this.ctx.arc(particle.origin.x * 10 + 5, particle.origin.y * 10 + 5, 5, 0, 2 * Math.PI);
+            this.ctx.moveTo(particle.position.x * 10 + 5, particle.position.y * 10 + 5);
+            this.ctx.arc(particle.position.x * 10 + 5, particle.position.y * 10 + 5, 5, 0, 2 * Math.PI);
         }
         this.ctx.fill();
     }
