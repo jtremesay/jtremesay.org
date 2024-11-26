@@ -35,7 +35,7 @@ class Particle {
     }
 
     update(dt: number, mouse_position: Vector2 | null) {
-        // Two forces : repulsion from the mouse and spring to the origin
+        // Two forces : repulsion from the mouse and attraction to the origin
 
         // Repulsion from the mouse
         let repulsion = new Vector2(0, 0);
@@ -48,10 +48,10 @@ class Particle {
         }
 
         // Spring to the origin
-        const spring = this.origin.sub(this.position).mul(0.1);
+        let attraction = this.origin.sub(this.position);
 
         // Resulting force
-        const force = spring.mul(10).add(repulsion.mul(10));
+        const force = attraction.mul(10).add(repulsion.mul(10));
 
         this.acceleration = force;
         this.velocity = this.velocity.add(this.acceleration.mul(dt));
