@@ -51,8 +51,6 @@ class Particle {
             const diff = this.position.sub(this.origin);
             const distance = diff.mag();
             if (distance > .1) {
-
-                const distance_squared = distance * distance;
                 const direction = diff.normalize().mul(-1);
                 attraction = direction.mul(distance);
             }
