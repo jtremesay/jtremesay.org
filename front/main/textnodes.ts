@@ -35,24 +35,30 @@ class Particle {
     }
 
     update(dt: number, mouse_position: Vector2 | null) {
-        // Two forces : repulsion from the mouse and attraction to the origin
-
-        // Repulsion from the mouse
         let repulsion = new Vector2(0, 0);
         if (mouse_position) {
-            const distance = mouse_position.sub(this.position);
-            const distance_mag = distance.mag();
-            if (distance_mag < 10) {
-                repulsion = distance.normalize().mul(1 / distance_mag).mul(-1);
+            const diff = this.position.sub(mouse_position);
+            const distance = diff.mag();
+            if (distance > .1) {
+                const distance_squared = distance * distance;
+                const direction = diff.normalize();
+                repulsion = direction.mul(1 / distance_squared);
             }
         }
 
-        // Spring to the origin
-        let attraction = this.origin.sub(this.position);
+        let attraction = new Vector2(0, 0);
+        {
+            const diff = this.position.sub(this.origin);
+            const distance = diff.mag();
+            if (distance > 1) {
 
-        // Resulting force
+                const distance_squared = distance * distance;
+                const direction = diff.normalize();
+                attraction = direction.mul(-1 / distance_squared);
+            }
+        }
+
         const force = attraction.mul(10).add(repulsion.mul(10));
-
         this.acceleration = force;
         this.velocity = this.velocity.add(this.acceleration.mul(dt));
         this.position = this.position.add(this.velocity.mul(dt));
