@@ -46,6 +46,10 @@ export class Vector2 {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+    distance(v: Vector2): number {
+        return v.sub(this).mag();
+    }
+
     normalize(): Vector2 {
         return this.div(this.mag());
     }
