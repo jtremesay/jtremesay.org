@@ -9,13 +9,13 @@
   },
   "devDependencies": {
     "glob": "^10.4.5",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2"
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
     "@types/three": "^0.162.0",
-    "axios": "^1.7.5",
+    "axios": "^1.7.8",
     "d3": "^7.9.0",
     "path": "^0.12.7",
     "three": "^0.162.0"
