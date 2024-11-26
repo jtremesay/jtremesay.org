@@ -69,7 +69,7 @@ class GNUpdater implements EngineUpdater<GNData> {
         this.mouse_position = new Vector2(x, y);
     }
 
-    update(data: GNData | null, dt: DOMHighResTimeStamp): GNData | null {
+    update(data: GNData | null, _dt: DOMHighResTimeStamp): GNData | null {
         if (!data) {
             return null;
         }
