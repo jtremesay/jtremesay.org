@@ -50,17 +50,17 @@ class Particle {
         {
             const diff = this.position.sub(this.origin);
             const distance = diff.mag();
-            if (distance > 1) {
+            if (distance > .1) {
 
                 const distance_squared = distance * distance;
-                const direction = diff.normalize();
-                attraction = direction.mul(-1 / distance_squared);
+                const direction = diff.normalize().mul(-1);
+                attraction = direction.mul(distance);
             }
         }
 
         const force = attraction.mul(10).add(repulsion.mul(10));
         this.acceleration = force;
-        this.velocity = this.velocity.add(this.acceleration.mul(dt));
+        this.velocity = this.velocity.add(this.acceleration.mul(dt)).mul(0.99);
         this.position = this.position.add(this.velocity.mul(dt));
 
     }
