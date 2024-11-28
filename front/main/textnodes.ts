@@ -64,54 +64,47 @@ class Particle {
     }
 }
 
+
+
 class GNEngine extends BaseEngine {
-    input: HTMLInputElement;
-    headless_canvas: HTMLCanvasElement = document.createElement("canvas");
-    headless_ctx: CanvasRenderingContext2D = this.headless_canvas.getContext("2d")!;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-
+    headless_canvas: HTMLCanvasElement = document.createElement("canvas");
+    headless_ctx: CanvasRenderingContext2D = this.headless_canvas.getContext("2d")!;
     particles: Particle[] = [];
     mouse_position: Vector2 | null = null;
 
-    constructor(input: HTMLInputElement, canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement) {
         super();
-        this.input = input;
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d")!;
-        input.addEventListener("input", this.on_input.bind(this));
         canvas.addEventListener("mousemove", this.on_mousemove.bind(this));
         canvas.addEventListener("mouseleave", this.on_mousseleave.bind(this));
-        this.set_text(input.value);
+    }
+
+    on_mousemove(event: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        this.mouse_position = new Vector2(x / 10, y / 10);
+    }
+
+    on_mousseleave() {
+        this.mouse_position = null;
     }
 
 
-    on_input(event: Event) {
-        const text = (event.target as HTMLInputElement).value;
-        this.set_text(text);
+    update(dt: number): void {
+        for (const particle of this.particles) {
+            particle.update(dt, this.mouse_position);
+        }
     }
 
-    set_text(text: string) {
-        // Get the size of the bounding box
-        this.headless_ctx.font = FONT;
-        const textMetrics = this.headless_ctx.measureText(text);
-        const width = Math.ceil(textMetrics.width);
-        const height = Math.ceil(textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent);
-
-        // Resize the canvas to the bounding box
-        this.headless_canvas.width = width;
-        this.headless_canvas.height = height;
-        this.canvas.width = width * 10;
-        this.canvas.height = height * 10;
-
-        // Draw the text
-        this.headless_ctx.font = FONT;
-        this.headless_ctx.fillStyle = "black";
-        this.headless_ctx.textAlign = "center";
-        this.headless_ctx.textBaseline = "middle";
-        this.headless_ctx.fillText(text, width / 2, height / 2);
-
+    build_particles() {
         // Read the pixels
+        const width = this.headless_canvas.width;
+        const height = this.headless_canvas.height;
+
         const imageData = this.headless_ctx.getImageData(0, 0, width, height);
         const pixels_data = imageData.data;
         this.particles = [];
@@ -136,24 +129,6 @@ class GNEngine extends BaseEngine {
         }
     }
 
-
-    on_mousemove(event: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        this.mouse_position = new Vector2(x / 10, y / 10);
-    }
-
-    on_mousseleave() {
-        this.mouse_position = null;
-    }
-
-    update(dt: number): void {
-        for (const particle of this.particles) {
-            particle.update(dt, this.mouse_position);
-        }
-    }
-
     render(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -166,13 +141,118 @@ class GNEngine extends BaseEngine {
         }
         this.ctx.fill();
     }
+
+}
+
+class GNEngineText extends GNEngine {
+    constructor(input: HTMLInputElement, canvas: HTMLCanvasElement) {
+        super(canvas);
+        input.addEventListener("input", this.on_input.bind(this));
+        this.set_text(input.value);
+    }
+
+    on_input(event: Event) {
+        const text = (event.target as HTMLInputElement).value;
+        this.set_text(text);
+    }
+
+    set_text(text: string): void {
+
+        // Get the size of the bounding box
+        this.headless_ctx.font = FONT;
+        const textMetrics = this.headless_ctx.measureText(text);
+        const width = Math.ceil(textMetrics.width);
+        const height = Math.ceil(textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent);
+
+        // Resize the canvas to the bounding box
+        this.headless_canvas.width = width;
+        this.headless_canvas.height = height;
+        this.canvas.width = width * 10;
+        this.canvas.height = height * 10;
+
+        // Draw the text
+        this.headless_ctx.clearRect(0, 0, this.headless_canvas.width, this.headless_canvas.height);
+        this.headless_ctx.font = FONT;
+        this.headless_ctx.fillStyle = "black";
+        this.headless_ctx.textAlign = "center";
+        this.headless_ctx.textBaseline = "middle";
+        this.headless_ctx.fillText(text, width / 2, height / 2);
+
+        this.build_particles();
+    }
+
+
+}
+
+class GNEngineDemo extends GNEngine {
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas);
+        this.canvas.width = 500;
+        this.canvas.height = 500;
+        this.headless_canvas.width = 50;
+        this.headless_canvas.height = 50;
+        this.build_particles();
+    }
+
+    build_particles(): void {
+        this.headless_ctx.clearRect(0, 0, this.headless_canvas.width, this.headless_canvas.height);
+        this.headless_ctx.fillStyle = "black";
+
+        // Square
+        this.headless_ctx.beginPath();
+        this.headless_ctx.moveTo(5, 5);
+        this.headless_ctx.lineTo(15, 5);
+        this.headless_ctx.lineTo(15, 15);
+        this.headless_ctx.lineTo(5, 15);
+        this.headless_ctx.closePath();
+        this.headless_ctx.fill();
+
+
+        // Triangle
+        this.headless_ctx.beginPath();
+
+        this.headless_ctx.moveTo(20, 15);
+        this.headless_ctx.lineTo(30, 15);
+        this.headless_ctx.lineTo(25, 5);
+        this.headless_ctx.closePath();
+
+        // 
+        this.headless_ctx.moveTo(40, 10);
+        this.headless_ctx.arc(40, 10, 5, 0, 2 * Math.PI);
+
+        // Smiley
+        // left eye
+        this.headless_ctx.moveTo(30, 27);
+        this.headless_ctx.arc(20, 27, 2, 0, 2 * Math.PI);
+
+        // right eye
+        this.headless_ctx.moveTo(30, 27);
+        this.headless_ctx.arc(30, 27, 2, 0, 2 * Math.PI);
+
+
+        // mouth, a banana
+        this.headless_ctx.moveTo(20, 35);
+        this.headless_ctx.bezierCurveTo(25, 40, 25, 40, 30, 35);
+        this.headless_ctx.fill();
+
+
+        // Draw the head, unfilled
+        this.headless_ctx.beginPath();
+        this.headless_ctx.arc(25, 30, 12, 0, 2 * Math.PI);
+        this.headless_ctx.stroke();
+
+
+        super.build_particles();
+
+    }
+
+
 }
 
 
-
 function main() {
-    const engine = new GNEngine(document.querySelector("#textnodes-input")!, document.querySelector("#textnodes-canvas")!);
-    engine.start();
+    (new GNEngineText(document.querySelector("#textnodes-input")!, document.querySelector("#textnodes-canvas-text")!)).start();
+    (new GNEngineDemo(document.querySelector("#textnodes-canvas-demo")!)).start();
 }
 
 main();
