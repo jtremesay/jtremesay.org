@@ -105,7 +105,7 @@ class GNEngine extends BaseEngine {
         this.canvas.height = height * 10;
 
         // Draw the text
-        this.headless_ctx.font = "30px Arial";
+        this.headless_ctx.font = FONT;
         this.headless_ctx.fillStyle = "black";
         this.headless_ctx.textAlign = "center";
         this.headless_ctx.textBaseline = "middle";
@@ -114,7 +114,6 @@ class GNEngine extends BaseEngine {
         // Read the pixels
         const imageData = this.headless_ctx.getImageData(0, 0, width, height);
         const pixels_data = imageData.data;
-
         this.particles = [];
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
