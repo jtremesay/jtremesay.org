@@ -8,14 +8,16 @@ slug: textnodes
 
 Padawan, mon ancien alternant, est en train de créer un effet rudement chouette pour son futur site pro ! J'essaye de le reproduire parce que je le trouve super cool et ingénieux :D
 
-J'appelle ça un «textnode» parce que dans la version originel de Padawan, les points composants les lettres sont interconnectés par des lignes, ce qui donne un effet de nœuds d'un graphe reliés par des arrêtes. Mais j'ai surtout été interessé par reproduire l'effet de "dithering", du coup j'ai pas reproduit tout l'effet.
+**TODO**: Insérer lien vers le site de Padawan quand il sera en ligne
+
+J'appelle ça un «textnode» parce que dans la version originel de Padawan, les points composants les lettres sont interconnectés par des lignes, ce qui donne un effet de nœuds d'un graphe reliés par des arrêtes. Mais j'ai surtout été interessé par reproduire l'effet de "dithering", donc j'ai pas tout refait.
 
 Mais y'a quand même une chouette animation quand vous passez la souris sur le texte ! (marche bof sur mobile)
 
 <input id="textnodes-input" value="Hello, world">
 <canvas id="textnodes-canvas-text">
 
-Sa solution pour générer le dithering est ultra-simple et ingénieuse ! Il dessine le texte dans un canvas headless, récupère l'image data associé, et lit les pixels pour chercher ceux définis. En plus, ça marche aussi avec autre chose que du texte. N'importe quoi rendu dans un canvas peut être utilisé pour générer des points !
+Sa solution pour générer le dithering est simple et ingénieuse. Il dessine le texte dans un canvas headless, récupère l'image data associé, et lit les pixels pour chercher ceux définis. En plus, ça marche aussi avec autre chose que du texte. N'importe quoi rendu dans un canvas peut être utilisé pour générer des points !
 
 <canvas id="textnodes-canvas-demo">
 
@@ -103,6 +105,6 @@ function main() {
 }
 ```
 
-Là, lfaffichage est fait dans un canvas parce que je tiens à avoir un bon framerate dans les animations. Mais si on uniquement interéssé par l'effet de dithering, il est possible de générer un SVG à la place. C'est plus léger pour le navigateure, mais limite potenetiellement les possibilités d'animation.
+Là, l'affichage est fait dans un canvas parce que je tiens à avoir un bon framerate dans les animations. Mais si on uniquement interéssé par l'effet de dithering, il est possible de générer un SVG à la place. C'est plus léger pour le navigateure, mais limite potenetiellement les possibilités d'animation.
 
 **TODO**: Insérer une démo d'un rendu svg
