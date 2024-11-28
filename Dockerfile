@@ -20,7 +20,7 @@ WORKDIR /code
 COPY package.json package-lock.json ./
 RUN npm install
 COPY tsconfig.json vite.config.ts ./
-COPY front/ front/
+COPY jtremesay/front/ jtremesay/front/
 RUN npm run build
 
 FROM python:3-slim AS site

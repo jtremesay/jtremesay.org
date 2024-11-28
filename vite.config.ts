@@ -7,7 +7,7 @@ export default defineConfig({
         manifest: "manifest.json",
         outDir: "./static",
         rollupOptions: {
-            input: globSync('front/main/*.ts'),
+            input: globSync('jtremesay/front/main/*.ts'),
         }
     }
 })
