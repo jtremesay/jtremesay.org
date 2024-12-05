@@ -146,7 +146,7 @@ Si cela échoue, cela signifie que le programme n'est pas correct :P
 
 Maintenant que nous avons un AST valide, nous pouvons l'interpréter.
 
-Input: <textarea id="brainfuck-interpreter-input">aaaa</textarea>
+Input: <textarea id="brainfuck-interpreter-input"></textarea>
 
 <button id="brainfuck-interpreter-run">Run</button>
 
