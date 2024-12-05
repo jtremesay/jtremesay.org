@@ -15,6 +15,7 @@ slug: index
 - [free flow]({% url 'page' 'freeflow' %}) : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
 - [particles]({% url 'page' 'particles' %}) : un système de particules 2D
 - [textnodes]({% url 'page' 'textnodes' %}) : Une astuce simple pour transformer un texte (mais pas que) en particules animables
+- [brainfuck]({% url 'page' 'brainfuck' %}) : Explorations de la théorie des langages et des compilateurs avec brainfuck
 
 ## Projets
 
