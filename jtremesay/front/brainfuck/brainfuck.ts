@@ -25,18 +25,27 @@ import { tokenizer } from './tokenizer';
 import { Node, ProgramNode, LoopNode, IncNode, DecNode, OutputNode, InputNode, MoveLeftNode, MoveRightNode } from './ast';
 import { parse } from './parser';
 import * as d3 from "d3";
+import { Interpreter } from './interpreter';
 
 class UI {
     input: HTMLTextAreaElement
     preprocessor_output: HTMLTextAreaElement
     tokenizer_output: HTMLTextAreaElement
     parser_output: HTMLElement
+    interpreter_input: HTMLTextAreaElement
+    interpreter_output: HTMLTextAreaElement
+    interpreter_run: HTMLButtonElement
+    interpreter_pointer: HTMLInputElement
 
     constructor() {
         this.input = document.getElementById('brainfuck-input') as HTMLTextAreaElement;
         this.preprocessor_output = document.getElementById('brainfuck-preprocessor') as HTMLTextAreaElement;
         this.tokenizer_output = document.getElementById('brainfuck-tokenizer') as HTMLTextAreaElement;
         this.parser_output = document.getElementById('brainfuck-parser')!;
+        this.interpreter_input = document.getElementById('brainfuck-interpreter-input') as HTMLTextAreaElement;
+        this.interpreter_output = document.getElementById('brainfuck-interpreter-output') as HTMLTextAreaElement;
+        this.interpreter_run = document.getElementById('brainfuck-interpreter-run') as HTMLButtonElement;
+        this.interpreter_pointer = document.getElementById('brainfuck-interpreter-pointer') as HTMLInputElement;
     }
 
     update_preprocessor(value: string) {
@@ -90,12 +99,17 @@ class Engine {
     preprocessed_code: string = ""
     tokens: Token[] = []
     ast: ProgramNode | null = null
+    interpreter: Interpreter = new Interpreter(this.read.bind(this), this.write.bind(this))
+    interpreter_pointer: number = 0
 
     ui: UI = new UI()
+
 
     constructor() {
         this.ui.input.addEventListener('input', this.on_input_change.bind(this))
         this.on_input_change()
+
+        this.ui.interpreter_run.addEventListener('click', this.on_run_interpreter.bind(this))
     }
 
     on_input_change() {
@@ -125,6 +139,23 @@ class Engine {
         }
 
         this.ui.update_parser(this.ast)
+    }
+
+    read() {
+        return this.ui.interpreter_input.value.charAt(this.interpreter_pointer++)
+    }
+
+    write(value: string) {
+        this.ui.interpreter_output.value += value
+    }
+
+    on_run_interpreter() {
+        if (this.ast === null) {
+            return
+        }
+        this.ui.interpreter_output.value = ""
+        this.interpreter_pointer = 0
+        this.interpreter.run(this.ast)
     }
 }
 

@@ -3,6 +3,10 @@ title: Brainfuck
 ---
 {% load django_vite %}
 {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'jtremesay/brainfuck/brainfuck.css' %}">
+{% vite_asset 'jtremesay/front/main/brainfuck.ts' %}
+
+
 
 Exploration du langage Brainfuck.
 
@@ -138,5 +142,12 @@ Si cela échoue, cela signifie que le programme n'est pas correct :P
     <ul id="brainfuck-parser" class="tree"></ul>
 </figure>
 
-<link rel="stylesheet" type="text/css" href="{% static 'jtremesay/brainfuck/brainfuck.css' %}">
-{% vite_asset 'jtremesay/front/main/brainfuck.ts' %}
+### Interpreter
+
+Maintenant que nous avons un AST valide, nous pouvons l'interpréter.
+
+Input: <textarea id="brainfuck-interpreter-input">aaaa</textarea>
+
+<button id="brainfuck-interpreter-run">Run</button>
+
+Output: <textarea id="brainfuck-interpreter-output" readonly="true"></textarea>
