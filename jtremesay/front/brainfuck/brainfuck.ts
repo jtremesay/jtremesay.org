@@ -26,6 +26,7 @@ import { Node, ProgramNode, LoopNode, IncNode, DecNode, OutputNode, InputNode, M
 import { parse } from './parser';
 import * as d3 from "d3";
 import { Interpreter } from './interpreter';
+import { CCompiler, PythonCompiler } from './compiler';
 
 class UI {
     input: HTMLTextAreaElement
@@ -36,6 +37,8 @@ class UI {
     interpreter_output: HTMLTextAreaElement
     interpreter_run: HTMLButtonElement
     interpreter_pointer: HTMLInputElement
+    compiler_c_output: HTMLTextAreaElement
+    compiler_python_output: HTMLTextAreaElement
 
     constructor() {
         this.input = document.getElementById('brainfuck-input') as HTMLTextAreaElement;
@@ -46,6 +49,8 @@ class UI {
         this.interpreter_output = document.getElementById('brainfuck-interpreter-output') as HTMLTextAreaElement;
         this.interpreter_run = document.getElementById('brainfuck-interpreter-run') as HTMLButtonElement;
         this.interpreter_pointer = document.getElementById('brainfuck-interpreter-pointer') as HTMLInputElement;
+        this.compiler_c_output = document.getElementById('brainfuck-compiler-c') as HTMLTextAreaElement;
+        this.compiler_python_output = document.getElementById('brainfuck-compiler-python') as HTMLTextAreaElement;
     }
 
     update_preprocessor(value: string) {
@@ -92,6 +97,14 @@ class UI {
             node.body.forEach((child) => this._update_parser_node(child, $ul.node()!));
         }
     }
+
+    update_compiler_c(value: string) {
+        this.compiler_c_output.value = value
+    }
+
+    update_compiler_python(value: string) {
+        this.compiler_python_output.value = value
+    }
 }
 
 class Engine {
@@ -101,9 +114,10 @@ class Engine {
     ast: ProgramNode | null = null
     interpreter: Interpreter = new Interpreter(this.read.bind(this), this.write.bind(this))
     interpreter_pointer: number = 0
+    c_compiler: CCompiler = new CCompiler()
+    python_compiler: PythonCompiler = new PythonCompiler()
 
     ui: UI = new UI()
-
 
     constructor() {
         this.ui.input.addEventListener('input', this.on_input_change.bind(this))
@@ -139,6 +153,7 @@ class Engine {
         }
 
         this.ui.update_parser(this.ast)
+        this.compile()
     }
 
     read() {
@@ -156,6 +171,27 @@ class Engine {
         this.ui.interpreter_output.value = ""
         this.interpreter_pointer = 0
         this.interpreter.run(this.ast)
+    }
+
+    compile() {
+        this.compile_c()
+        this.compile_python()
+    }
+
+    compile_c() {
+        if (this.ast === null) {
+            return
+        }
+
+        this.ui.update_compiler_c(this.c_compiler.compile(this.ast))
+    }
+
+    compile_python() {
+        if (this.ast === null) {
+            return
+        }
+
+        this.ui.update_compiler_python(this.python_compiler.compile(this.ast))
     }
 }
 

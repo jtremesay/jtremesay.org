@@ -6,8 +6,6 @@ title: Brainfuck
 <link rel="stylesheet" type="text/css" href="{% static 'jtremesay/brainfuck/brainfuck.css' %}">
 {% vite_asset 'jtremesay/front/main/brainfuck.ts' %}
 
-
-
 Exploration du langage Brainfuck.
 
 ## Introduction
@@ -144,10 +142,22 @@ Si cela échoue, cela signifie que le programme n'est pas correct :P
 
 ### Interpreter
 
-Maintenant que nous avons un AST valide, nous pouvons l'interpréter.
+Maintenant que nous avons un AST valide, nous pouvons l'interpréter. C'est facile, il suffit simplement de le parcourir en profondeur et d'exécuter les instructions au fur et à mesure qu'on les découvre.
 
 Input: <textarea id="brainfuck-interpreter-input"></textarea>
 
 <button id="brainfuck-interpreter-run">Run</button>
 
 Output: <textarea id="brainfuck-interpreter-output" readonly="true"></textarea>
+
+### Compiler
+
+À partir de là, il est aussi facile de compiler le programme brainfuck en un autre langage.
+
+#### C
+
+<textarea id="brainfuck-compiler-c" cols="80" rows="25" readonly="true"></textarea>
+
+#### Python
+
+<textarea id="brainfuck-compiler-python" cols="80" rows="25" readonly="true"></textarea>
