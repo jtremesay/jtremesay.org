@@ -27,13 +27,40 @@ export interface EngineRenderer<D> {
 }
 
 
-export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> {
+export class BaseEngine {
+    last_time: DOMHighResTimeStamp = 0;
+
+    run(timestamp: DOMHighResTimeStamp = 0) {
+        const dt = (timestamp - this.last_time) / 1000;
+        this.last_time = timestamp;
+
+        this.update(dt);
+        this.render();
+
+        window.requestAnimationFrame(this.run.bind(this));
+    }
+
+    update(_dt: number) {
+    }
+
+    render() {
+    }
+
+    start() {
+        this.last_time = 0
+        this.run(1 / 60)
+    }
+}
+
+
+export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> extends BaseEngine {
     updater: U | null;
     renderer: R | null;
     data: D | null;
     last_time: DOMHighResTimeStamp = 0;
 
     constructor(updater: U | null, renderer: R | null, data: D | null) {
+        super();
         this.updater = updater;
         this.renderer = renderer;
         this.data = data;
@@ -52,20 +79,5 @@ export class Engine<U extends EngineUpdater<D>, R extends EngineRenderer<D>, D> 
         if (this.renderer !== null) {
             this.renderer.render(this.data);
         }
-    }
-
-    run(timestamp: DOMHighResTimeStamp = 0) {
-        const dt = (timestamp - this.last_time) / 1000;
-        this.last_time = timestamp;
-
-        this.update(dt);
-        this.render();
-
-        window.requestAnimationFrame(this.run.bind(this));
-    }
-
-    start() {
-        this.last_time = 0
-        this.run(0)
     }
 }
