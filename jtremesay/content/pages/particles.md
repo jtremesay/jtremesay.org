@@ -4,7 +4,7 @@ slug: particles
 ---
 {% load static %}
 {% load django_vite %}
-{% vite_asset 'front/main/particles.ts' %}
+{% vite_asset 'jtremesay/front/main/particles.ts' %}
 
 Des particules se promenant dans un champs vectoriel. 
 

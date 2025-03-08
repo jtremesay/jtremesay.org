@@ -39,6 +39,6 @@
     }
   },
   "include": [
-    "front"
+    "jtremesay/front"
   ]
 }
