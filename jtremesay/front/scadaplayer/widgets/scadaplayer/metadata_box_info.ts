@@ -29,11 +29,12 @@ export class MetadataBoxInfo extends TitledWidget {
 
     update(metadata: Metadata, _simulation: Simulation): void {
         let box_info = this.widget as BoxInfo
+
         box_info.values = [
             metadata.farm ?? "N/A",
             metadata.turbine ?? "N/A",
             metadata.turbine_model ?? "N/A",
-            `${metadata.nominal_power} kW` ?? "N/A",
+            (metadata.nominal_power === undefined || metadata.nominal_power === null) ? "N/A" : `${metadata.nominal_power} kW`,
         ]
     }
 }

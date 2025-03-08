@@ -14,7 +14,7 @@ En faisant le rapport du nombre de points dans le disque au nombre de tirages, o
 Représentation du calcul de la valeur de π par rapport du nombre de points aléatoires étant contenus dans un quart de cercle, l'ensemble des possibles étant un carré de côté R :
 
 
-{% vite_asset 'front/main/pimontecarlo.ts' %}
+{% vite_asset 'jtremesay/front/main/pimontecarlo.ts' %}
 <div id="app">
     <label for="samples_count">
         Samples count:

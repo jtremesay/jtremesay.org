@@ -6,7 +6,7 @@ title: Tris animés
 Un truc much en vanilla TS pour visualiser différents algos de tris.
 
 
-{% vite_asset 'front/main/sorts.ts' %}
+{% vite_asset 'jtremesay/front/main/sorts.ts' %}
 <div id="app">
     <div>
         <label>
