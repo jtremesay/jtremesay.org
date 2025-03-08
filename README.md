@@ -1,11 +1,11 @@
-# JSSG - Jtremesay's Static Site Generator
+# [jtremesay.org](https://jtremesay.org)
 
 [![CI/CD](https://github.com/jtremesay/jtremesay.org/actions/workflows/main.yaml/badge.svg)](https://github.com/jtremesay/jtremesay.org/actions/workflows/main.yaml)
 
-The thing that propulse [jtremesay.org](https://jtremesay.org).
-Also host the content for the aforementioned site.
+My web site!
 
-Today, it's a django app that can generate a static website.
+Propulsed by [JSSG](https://github.com/jtremesay/jssg).
+
 
 ## Bootstrap
 

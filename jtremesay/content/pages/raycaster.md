@@ -14,7 +14,7 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
 
 
 
-{% vite_asset 'front/main/raycaster.ts' %}
+{% vite_asset 'jtremesay/front/main/raycaster.ts' %}
 <div id="raycaster" class="rc">
     <table border="solid">
         <thead>
