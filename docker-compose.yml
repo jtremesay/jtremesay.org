@@ -12,21 +12,14 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-version: "3.8"
 services:
   jtremesay:
     image: "killruana/jtremesay.org:main"
-    ports:
-      - 8003:80
     networks:
       - "traefik_public"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.jtremesay-compress.compress=true"
-      - "traefik.http.routers.jtremesay.entrypoints=websecure"
-      - "traefik.http.routers.jtremesay.middlewares=jtremesay-compress"
       - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`) || Host(`slaanesh.org`)"
-      - "traefik.http.routers.jtremesay.service=jtremesay"
       - "traefik.http.routers.jtremesay.tls.certresolver=leresolver"
       - "traefik.http.services.jtremesay.loadbalancer.server.port=80"
 
