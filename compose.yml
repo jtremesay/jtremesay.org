@@ -16,6 +16,4 @@ services:
   jtremesay:
     image: "killruana/jtremesay.org:main"
     ports:
-      - target: 80
-        published: 8081
-        mode: host
+      - 8081:80
