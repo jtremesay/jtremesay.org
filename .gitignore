@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Environments
+/.direnv/
+
+# Node
+/node_modules/
+
+# Generated site
+/dist/
+
+# Django
+/.hotfile
+/db.sqlite3
+/static
