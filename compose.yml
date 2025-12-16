@@ -18,7 +18,7 @@ services:
     networks:
       - "traefik_public"
     ports:
-      - "80"
+      - "80:80"
     deploy:
       labels:
         - "traefik.enable=true"
