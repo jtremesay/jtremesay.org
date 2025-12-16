@@ -36,4 +36,3 @@ RUN ./manage.py distill-local --collectstatic --force dist
 
 FROM nginx:mainline-alpine
 COPY --from=site /code/dist/ /usr/share/nginx/html/
-EXPOSE 80
