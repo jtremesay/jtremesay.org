@@ -1,0 +1,76 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    steps:
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            killruana/jtremesay.org
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=registry,ref=killruana/jtremesay.org:buildcache
+
+  build-prod:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            killruana/jtremesay.org
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: killruana
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=registry,ref=killruana/jtremesay.org:buildcache
+          cache-to: type=registry,ref=killruana/jtremesay.org:buildcache,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-prod
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy
+        uses: jtremesay/docker-swarm-deploy@main
+        with:
+          docker_username: killruana
+          docker_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          remote_host: jtremesay.org
+          remote_user: github-ci
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          stack_name: jtremesay_org
