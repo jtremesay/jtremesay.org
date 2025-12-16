@@ -22,8 +22,8 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`)"
-        - "traefik.http.routers.jtremesay.tls.certresolver=ls"
-        - "traefik.http.services.jtremesay.loadbalancer.server.port=80"
+        - "traefik.http.routers.jtremesay.tls.certresolver=le"
+#- "traefik.http.services.jtremesay.loadbalancer.server.port=80"
 
 networks:
   traefik_public:
