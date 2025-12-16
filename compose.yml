@@ -17,7 +17,8 @@ services:
     image: "killruana/jtremesay.org:main"
     networks:
       - "traefik_public"
-
+    ports:
+      - "80"
     deploy:
       labels:
         - "traefik.enable=true"
