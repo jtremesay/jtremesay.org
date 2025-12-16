@@ -21,4 +21,4 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`)"
       - "traefik.http.routers.jtremesay.tls.certresolver=le"
-      - "traefik.http.services.jtremesay.loadBalancer.servers[0].url==http://127.0.0.1:8081/"
+      - "traefik.http.services.jtremesay.loadBalancer.servers[0].url=http://127.0.0.1:8081/"
