@@ -15,5 +15,16 @@
 services:
   jtremesay:
     image: "killruana/jtremesay.org:main"
-    ports:
-      - 8081:80
+    networks:
+      - "traefik_public"
+
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jtremesay.rule=Host(`jtremesay.org`)"
+        - "traefik.http.routers.jtremesay.tls.certresolver=ls"
+        - "traefik.http.services.jtremesay.loadbalancer.server.port=80"
+
+networks:
+  traefik_public:
+    external: true
