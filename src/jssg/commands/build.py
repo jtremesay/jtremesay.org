@@ -3,6 +3,7 @@ from importlib import import_module
 from pathlib import Path
 from shutil import rmtree
 
+from jssg.builder import build_site
 from jssg.command import BaseCommand
 from jssg.loaders import load_site
 from jssg.settings import DIST_DIR
@@ -19,4 +20,4 @@ class Command(BaseCommand):
 
         module = import_module(args.module)
         site = load_site(module)
-        print(site)
+        build_site(site)
