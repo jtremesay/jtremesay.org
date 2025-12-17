@@ -1,8 +1,6 @@
-from pathlib import Path
-
-FRONT_DIR = Path("front")
-PAGES_DIR = Path("pages")
-POSTS_DIR = Path("posts")
-STATIC_DIR = Path("static")
-TEMPLATES_DIR = Path("templates")
-OUTPUT_DIR = Path("output")
+FRONT_DIR = "front"
+PAGES_DIR = "pages"
+POSTS_DIR = "posts"
+STATIC_DIR = "static"
+TEMPLATES_DIR = "templates"
+OUTPUT_DIR = "output"
