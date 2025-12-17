@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
 
 
 @dataclass
@@ -7,7 +9,14 @@ class Page:
     slug: str
     content_md: str
 
+@dataclass
+class Post(Page):
+    timestamp: datetime
+    modified: Optional[datetime] = None
 
-def load_pages(module) -> list[Page]:
-    pages = []
-    return pages
+
+@dataclass
+class Site:
+    base_url: str
+    pages: list[Page]
+    posts: list[Post]
