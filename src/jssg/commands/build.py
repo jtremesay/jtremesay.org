@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, Namespace
 
-from jssg.core.command import BaseCommand
+from jssg.command import BaseCommand
 
 
 class Command(BaseCommand):

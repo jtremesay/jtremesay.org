@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from jssg.core.models import Page
+from jssg.models import Page
 from jssg.settings import PAGES_DIR
 
 logger = logging.getLogger(__name__)

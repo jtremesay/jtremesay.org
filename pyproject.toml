@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = []
 
 [project.scripts]
-jssg = "jssg.core.command:main"
+jssg = "jssg.command:main"
 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]
