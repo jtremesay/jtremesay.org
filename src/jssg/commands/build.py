@@ -16,8 +16,7 @@ class Command(BaseCommand):
     def handle(self, args: Namespace) -> None:
         dist_dir = Path(DIST_DIR)
         rmtree(dist_dir, ignore_errors=True)
-        dist_dir.mkdir(parents=True, exist_ok=True)
 
         module = import_module(args.module)
         site = load_site(module)
-        build_site(site)
+        build_site(site, dist_dir=dist_dir)

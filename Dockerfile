@@ -16,4 +16,4 @@ RUN uv sync
 RUN uv run jssg build
 
 FROM nginx:alpine AS final
-COPY --from=build /code/dist/ /usr/share/nginx/html/
+COPY --from=build /code/dist /usr/share/nginx/html
