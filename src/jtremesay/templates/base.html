@@ -1,5 +1,3 @@
-{% load static %}
-{% load django_vite %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -7,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>jtremesay.org{% if object %} | {{ object.title }}{% endif %}</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'jtremesay/theme/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'jtremesay/theme/favicon-16x16.png' %}">
-    <link rel="icon" type="image/x-icon" href="{% static 'jtremesay/theme/favicon.ico' %}">
-    <link rel="stylesheet" href="{% static 'jtremesay/pygments/monokai.css' %}">
-    {% vite_hmr_client %}
+    <link rel="icon" type="image/png" sizes="32x32" href="jtremesay/theme/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="jtremesay/theme/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="jtremesay/theme/favicon.ico">
+    <link rel="stylesheet" href="jtremesay/pygments/monokai.css">
 </head>
 
 <body>
@@ -20,7 +17,7 @@
     </header>
     <hr>
     <main>
-        {% block "content" %}{% endblock %}
+        {% block content %}{% endblock %}
     </main>
     <hr>
     <footer>
