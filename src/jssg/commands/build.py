@@ -4,6 +4,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from jssg.command import BaseCommand
+from jssg.loaders import load_site
 from jssg.settings import DIST_DIR
 
 
@@ -17,3 +18,5 @@ class Command(BaseCommand):
         dist_dir.mkdir(parents=True, exist_ok=True)
 
         module = import_module(args.module)
+        site = load_site(module)
+        print(site)

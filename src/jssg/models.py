@@ -11,12 +11,11 @@ class Page:
 
 @dataclass
 class Post(Page):
-    timestamp: datetime
+    date: datetime
     modified: Optional[datetime] = None
 
 
 @dataclass
 class Site:
-    base_url: str
     pages: list[Page]
     posts: list[Post]
