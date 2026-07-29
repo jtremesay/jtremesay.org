@@ -25,15 +25,42 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import importlib.util
+from os import environ
 from pathlib import Path
+from types import ModuleType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path.cwd().resolve()
 
 
+def load_website_settings(path: Path) -> ModuleType:
+    """Load the JSSG website settings module from the given path."""
+    spec = importlib.util.spec_from_file_location("jssg_settings", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Could not load settings module from {path}")
+
+    jssg_settings = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(jssg_settings)
+
+    return jssg_settings
+
+
 # JSSG
-JSSG_SITE_NAME = "jtremesay.org"
-JSSG_WEBSITE_DIR = BASE_DIR / "website"
+JSSG_WEBSITE_DIR = Path(
+    environ.get("JSSG_WEBSITE_DIR", (BASE_DIR / "website").resolve())
+)
+JSSG_SETTINGS = load_website_settings(JSSG_WEBSITE_DIR / "settings.py")
+
+try:
+    JSSG_SITE_NAME = environ["JSSG_SITE_NAME"]
+except KeyError:
+    try:
+        JSSG_SITE_NAME = JSSG_SETTINGS.SITE_NAME
+    except AttributeError:
+        JSSG_SITE_NAME = "jtremesay.org"
+
+
 JSSG_PAGES_DIR = JSSG_WEBSITE_DIR / "pages"
 JSSG_STATIC_DIR = JSSG_WEBSITE_DIR / "static"
 JSSG_TEMPLATES_DIR = JSSG_WEBSITE_DIR / "templates"
