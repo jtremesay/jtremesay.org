@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load jssg %}
 
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -15,12 +16,12 @@
 
   <body>
     <header>
-      <h1><a href="{% url 'page' 'index.html' %}">{{ site_name }}</a></h1>
+      <h1><a href="{% page_url 'index.html' %}">{{ site_name }}</a></h1>
       <nav>
           <ul>
-              <li><a href="{% url 'page' 'a_propos.html' %}">À propos</a></li>
+              <li><a href="{% page_url 'a_propos.html' %}">À propos</a></li>
               <li><a href="#">Flux Atom</a></li>
-              <li><a href="{% url 'page' 'cv.html' %}">CV</a></li>
+              <li><a href="{% page_url 'cv.html' %}">CV</a></li>
               <li><a href="https://duckduckgo.com/?t=ffab&q=site%{{ site_name }}&ia=web">[Recherche]</a></li>
           </ul>
       </nav>
