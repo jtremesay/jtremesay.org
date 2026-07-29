@@ -7,7 +7,7 @@ I love automation. I increase your productivity by automating stuff.
 
 ## Contact
 
-- [Email](jonathan.tremesaygues++job@slaanesh.org)
+- [Email](mailto:jonathan.tremesaygues+job@slaanesh.org)
 
 
 ## Natural languages
