@@ -1,8 +1,21 @@
 ---
 title: "Bienvenue sur mon site!"
 ---
+{% load jssg %}
 
 ## Pages
+
+- {% page_link_md "cgi.html" %}
+- [Un raycaster façon Wolfenstein3D en pur typescript](#)
+- [Algorithmes de tris animés](#)
+- [Calculer Pi au casino](#)
+- [Scada player](#) : un outil pour visualiser les données issues d'une éolienne
+- [Crankshaft](#) : Simulation de systèmes vilebrequin / bielle / piston
+- [Doom](#) : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
+- [free flow](#) : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
+- [particles](#) : un système de particules 2D
+- [textnodes](#) : Une astuce simple pour transformer un texte (mais pas que) en particules animables
+- [brainfuck](#) : Explorations de la théorie des langages et des compilateurs avec brainfuckS
 
 ## Projets
 

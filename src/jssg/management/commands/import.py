@@ -64,7 +64,6 @@ class Command(BaseCommand):
             ):
                 for change, path in changes:
                     path = Path(path)
-                    print(f"Detected change: {change}, path: {path}")
                     match change:
                         case Change.added | Change.modified:
                             tqdm.write(f"Importing {path}")

@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from django import template
 from django.contrib.staticfiles import finders
 from django.template.defaultfilters import stringfilter
@@ -38,6 +39,23 @@ def page_url(url: str) -> str:
 
     # Could probably just use the input url
     return reverse("page", args=[page.url])
+
+
+@register.simple_tag
+def page_link_md(url: str, text: str | None = None) -> str:
+    """
+    Returns a markdown link to a page given its title and link text.
+    """
+    # Check if the page exists
+    try:
+        page = Page.objects.get(url=url)
+    except Page.DoesNotExist:
+        raise ValueError(f"Page with url '{url}' does not exist.")
+
+    if text is None:
+        text = page.title
+
+    return f"[{text}]({reverse('page', args=[page.url])})"
 
 
 @register.simple_tag
