@@ -15,7 +15,7 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
 
 
 
-<div id="raycaster" class="rc">
+<div class="raycaster">
     <table border="solid">
         <thead>
             <tr>
@@ -26,12 +26,12 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
         <tbody>
             <tr>
                 <td>Canvas</td>
-                <td><canvas class="rc-output-canvas" width="800" height="600"></canvas></td>
+                <td><canvas class="raycaster-canvas" width="960" height="540"></canvas></td>
             </tr>
             <tr>
                 <td>SVG</td>
-                <td><svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="rc-output-svg" width="800" height="600"
-    viewBox="0 0 800 600"></svg></td>
+                <td><svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="raycaster-svg" width="960" height="540"
+    viewBox="0 0 960 540"></svg></td>
             </tr>
         </tbody>
     </table>

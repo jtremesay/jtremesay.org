@@ -2,8 +2,8 @@
  * Raycaster
  * Copyright (C) 2023 Jonathan Tremesaygues
  *
- * main.ts
- * 
+ * raytracer/drawer.ts
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,15 +17,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import 'vite/modulepreload-polyfill';
-import { Raycaster } from './engine';
 
+/**
+ * @brief An interface for drawing stuff
+ */
+export interface Drawer {
+    /**
+     * @brief Clear the canvas
+     */
+    clear(): void;
 
+    /**
+     * @brief Draw the floor
+     */
+    draw_floor(): void;
 
-for (const rc_node of document.querySelectorAll(".raycaster")) {
-    if (rc_node == null) {
-        continue;
-    }
-    let rc = new Raycaster(rc_node as HTMLElement);
-    rc.run();
+    /**
+     * @brief Draw the ceil
+     */
+    draw_ceil(): void;
+
+    /**
+     * @brief Draw a vertical wall portion
+     * @param column
+     * @param height Height of the wall portion, in pixels
+     */
+    draw_wall(column: number, height: number, color: string): void;
 }
