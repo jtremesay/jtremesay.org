@@ -1,5 +1,5 @@
 ---
-title: Raycaster
+title: "Un raycaster façon Wolfenstein3D en pur typescript"
 ---
 {% load jssg %}
 
@@ -12,8 +12,6 @@ C'est absolument pas orienté performance. Je voulais juste découvrir comment o
 Les images sont particulièrement distordus sur les bords de l'écran. C'est parce que mes formules de projections sont assez meh. On va dire que c'est une feature et non un bug…
 
 Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QWERTY ("ZQSD" sur un AZERTY, "ÉAUI" sur un BÉPOÈ).
-
-
 
 <div class="raycaster">
     <table border="solid">

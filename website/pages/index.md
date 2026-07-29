@@ -6,8 +6,8 @@ title: "Bienvenue sur mon site!"
 ## Pages
 
 - {% page_link_md "cgi.html" %}
-- {% page_link_md "raycaster.html" "Un raycaster façon Wolfenstein3D en pur typescript" %}
-- [Algorithmes de tris animés](#)
+- {% page_link_md "raycaster.html" %}
+- {% page_link_md "tris_animes.html" %}
 - [Calculer Pi au casino](#)
 - [Scada player](#) : un outil pour visualiser les données issues d'une éolienne
 - [Crankshaft](#) : Simulation de systèmes vilebrequin / bielle / piston

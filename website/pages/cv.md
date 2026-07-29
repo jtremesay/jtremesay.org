@@ -1,5 +1,5 @@
 ---
-title: Productivity software engineer based at Montpellier, France
+title: "Productivity software engineer based at Montpellier, France"
 slug: cv
 ---
 
