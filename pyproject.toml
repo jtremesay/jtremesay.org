@@ -4,11 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = ["python-frontmatter>=1.3.0"]
+dependencies = ["django>=6.0.7", "python-frontmatter>=1.3.0"]
 license = "AGPL-3.0-only"
 
 [project.scripts]
-jssg = "jssg.main:main"
+jssg = "jssg.manage:main"
 
 [build-system]
 requires = ["uv_build<0.12"]
