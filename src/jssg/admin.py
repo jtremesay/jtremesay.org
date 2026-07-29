@@ -13,7 +13,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from django.contrib import admin
 
-# from django.contrib import admin
+from jssg import models
 
-# Register your models here.
+
+@admin.register(models.Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = ("url", "title")
+    search_fields = ("url", "title")
