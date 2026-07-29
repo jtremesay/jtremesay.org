@@ -1,6 +1,5 @@
 ---
 title: "Productivity software engineer based at Montpellier, France"
-slug: cv
 ---
 
 I love automation. I increase your productivity by automating stuff.
