@@ -33,6 +33,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from jssg import views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("<str:url>", views.PageDetailView.as_view(), name="page_detail"),
 ]

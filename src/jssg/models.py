@@ -85,7 +85,7 @@ class Page(Content):
             rel_path = path.relative_to(settings.JSSG_PAGES_DIR)
         except ValueError:
             raise ValueError(f"Path {path} is not under '{settings.JSSG_PAGES_DIR}'")
-        url = "/" + str(rel_path.with_suffix(".html"))
+        url = str(rel_path.with_suffix(".html"))
 
         return cls(
             metadata=content.metadata, body_md=content.content, title=title, url=url

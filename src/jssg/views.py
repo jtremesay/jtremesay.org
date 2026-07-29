@@ -13,6 +13,13 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-# from django.shortcuts import render
+from django.views.generic import DetailView
 
-# Create your views here.
+from jssg.models import Page
+
+
+class PageDetailView(DetailView):
+    model = Page
+    template_name = "page.html"
+    slug_field = "url"
+    slug_url_kwarg = "url"

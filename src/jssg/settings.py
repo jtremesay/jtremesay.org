@@ -31,6 +31,13 @@ from pathlib import Path
 BASE_DIR = Path.cwd().resolve()
 
 
+# JSSG
+JSSG_SITE_NAME = "jtremesay"
+JSSG_WEBSITE_DIR = BASE_DIR / "website"
+JSSG_PAGES_DIR = JSSG_WEBSITE_DIR / "pages"
+JSSG_TEMPLATES_DIR = JSSG_WEBSITE_DIR / "templates"
+JSSG_DIST_DIR = JSSG_WEBSITE_DIR / "dist"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -70,7 +77,7 @@ ROOT_URLCONF = "jssg.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [JSSG_TEMPLATES_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,10 +134,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
-
-# JSSG
-JSSG_WEBSITE_DIR = BASE_DIR / "website"
-JSSG_PAGES_DIR = JSSG_WEBSITE_DIR / "pages"
-JSSG_DIST_DIR = JSSG_WEBSITE_DIR / "dist"
 
 STATIC_ROOT = JSSG_DIST_DIR / "static"
