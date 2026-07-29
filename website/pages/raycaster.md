@@ -35,4 +35,4 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
     </table>
 </div>
 
-{% vite_module 'raycaster/main.ts' %}
+{% vite_module 'raycaster' %}

@@ -19,4 +19,4 @@ Ici, un [triangle de Sierpinski](https://fr.wikipedia.org/wiki/Triangle_de_Sierp
     </svg>
 </div>
 
-{% vite_module "cgi/main.ts" %}
+{% vite_module "cgi" %}

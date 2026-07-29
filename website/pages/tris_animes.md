@@ -65,4 +65,4 @@ Un truc much en vanilla TS pour visualiser différents algos de tris.
         </tbody>
     </table>
 </div>
-{% vite_module 'sorts/main.ts' %}
+{% vite_module 'sorts' %}

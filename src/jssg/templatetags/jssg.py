@@ -90,7 +90,7 @@ def vite_module(path: str) -> str:
     Returns the URL of a Vite module given its path.
     """
     return format_html(
-        '<script type="module" src="http://localhost:5173/website/front/{}"></script>',
+        '<script type="module" src="http://localhost:5173/website/front/{}/main.ts"></script>',
         path,
     )
 
