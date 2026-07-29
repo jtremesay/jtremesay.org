@@ -32,7 +32,7 @@ BASE_DIR = Path.cwd().resolve()
 
 
 # JSSG
-JSSG_SITE_NAME = "jtremesay"
+JSSG_SITE_NAME = "jtremesay.org"
 JSSG_WEBSITE_DIR = BASE_DIR / "website"
 JSSG_PAGES_DIR = JSSG_WEBSITE_DIR / "pages"
 JSSG_TEMPLATES_DIR = JSSG_WEBSITE_DIR / "templates"

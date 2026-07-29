@@ -1,0 +1,14 @@
+{% load i18n %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% spaceless %}{{ site_name }}{% block page_title %}{% if object.title %} - {{ object.title }}{% endif %}{% endblock %}{% endspaceless %}</title>
+  </head>
+
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>

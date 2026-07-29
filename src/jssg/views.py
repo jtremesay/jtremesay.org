@@ -13,12 +13,22 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from django.conf import settings
 from django.views.generic import DetailView
+from django.views.generic.base import ContextMixin
 
 from jssg.models import Page
 
 
-class PageDetailView(DetailView):
+class SettingsContextMixin(ContextMixin):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["site_name"] = settings.JSSG_SITE_NAME
+
+        return context
+
+
+class PageDetailView(SettingsContextMixin, DetailView):
     model = Page
     template_name = "page.html"
     slug_field = "url"
