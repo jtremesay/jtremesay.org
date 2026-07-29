@@ -20,8 +20,8 @@ from typing import Any, Self, cast
 
 import frontmatter
 
-CONTENT_DIR = Path() / "content"
-PAGES_DIR = CONTENT_DIR / "pages"
+WEBSITE_DIR = Path() / "website"
+PAGES_DIR = WEBSITE_DIR / "pages"
 
 
 @dataclass
