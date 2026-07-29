@@ -35,8 +35,10 @@ BASE_DIR = Path.cwd().resolve()
 JSSG_SITE_NAME = "jtremesay.org"
 JSSG_WEBSITE_DIR = BASE_DIR / "website"
 JSSG_PAGES_DIR = JSSG_WEBSITE_DIR / "pages"
+JSSG_STATIC_DIR = JSSG_WEBSITE_DIR / "static"
 JSSG_TEMPLATES_DIR = JSSG_WEBSITE_DIR / "templates"
 JSSG_DIST_DIR = JSSG_WEBSITE_DIR / "dist"
+JSSG_REPO = "https://github.com/jtremesay/jtremesay.org"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -134,5 +136,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFILES_DIRS = [JSSG_STATIC_DIR]
 STATIC_ROOT = JSSG_DIST_DIR / "static"

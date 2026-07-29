@@ -1,6 +1,11 @@
+<!DOCTYPE html>{% spaceless %}
+
 {% load i18n %}
-<!DOCTYPE html>
+{% load static %}
+
 {% get_current_language as LANGUAGE_CODE %}
+
+{% endspaceless %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
@@ -9,6 +14,41 @@
   </head>
 
   <body>
-    {% block content %}{% endblock %}
+    <header>
+      <h1><a href="#">{{ site_name }}</a></h1>
+      <nav>
+          <ul>
+              <li><a href="#">À propos</a></li>
+              <li><a href="#">Flux Atom</a></li>
+              <li><a href="#">CV</a></li>
+              <li><a href="https://duckduckgo.com/?t=ffab&q=site%{{ site_name }}&ia=web">[Recherche]</a></li>
+          </ul>
+      </nav>
+    </header>
+    <main>{% block content %}{% endblock %}</main>
+    <footer>
+      <p>
+          Copyright © 2023 - {% now "Y" %} Jonathan Tremesaygues.
+      </p>
+
+      <p>
+          This work is licensed under a
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+              Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+          </a>.
+          <br>
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+              <img alt="Creative Commons License" style="border-width:0" src="{% static 'theme/cc_byncsa.png' %}" />
+          </a>
+      </p>
+
+      <p>
+          The code source of this site is available <a href="{{ jssg_repo }}">here</a>.
+      </p>
+
+      <p>
+          Powered by JSSG, a django static site generator.
+      </p>
+    </footer>
   </body>
 </html>
