@@ -26,6 +26,7 @@ for (const rc_node of document.querySelectorAll(".raycaster")) {
     if (rc_node == null) {
         continue;
     }
+
     let rc = new Raycaster(rc_node as HTMLElement);
     rc.run();
 }
