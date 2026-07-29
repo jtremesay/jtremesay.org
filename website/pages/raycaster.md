@@ -2,8 +2,6 @@
 title: "Un raycaster façon Wolfenstein3D en pur typescript"
 vite_modules: ["raycaster"]
 ---
-{% load jssg %}
-
 Un petit raycaster écrit en pur typescript sans aucune dépendance externe.
 
 Le moteur de rendu émet des commandes de dessins qui sont exécuté par les différents backend afin de supporter plusieurs type d'affichage. Par exemple, ici, le moteur utilise deux backends pour dessiner dans un Canvas 2D et dans un SVG.

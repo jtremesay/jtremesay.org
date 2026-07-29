@@ -2,8 +2,6 @@
 title: "Tris animés"
 vite_modules: ["sorts"]
 ---
-{% load jssg %}
-
 Un truc much en vanilla TS pour visualiser différents algos de tris.
 
 <div id="app">
