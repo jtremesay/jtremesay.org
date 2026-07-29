@@ -15,22 +15,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.conf import settings
 from django.views.generic import DetailView
-from django.views.generic.base import ContextMixin
 
 from jssg.models import Page
 
 
-class SettingsContextMixin(ContextMixin):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["site_name"] = settings.JSSG_SITE_NAME
-        context["jssg_repo"] = settings.JSSG_REPO
-
-        return context
-
-
-class PageDetailView(SettingsContextMixin, DetailView):
+class PageDetailView(DetailView):
     model = Page
     template_name = "page.html"
     slug_field = "url"
     slug_url_kwarg = "url"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["vite_modules"] = self.object.vite_modules
+        context["site_name"] = settings.JSSG_SITE_NAME
+        context["jssg_repo"] = settings.JSSG_REPO
+
+        return context

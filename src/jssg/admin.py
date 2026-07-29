@@ -20,5 +20,5 @@ from jssg import models
 
 @admin.register(models.Page)
 class PageAdmin(admin.ModelAdmin):
-    list_display = ("url", "title")
+    list_display = ("url", "title", "vite_modules")
     search_fields = ("url", "title")

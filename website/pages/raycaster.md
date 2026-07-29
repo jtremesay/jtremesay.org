@@ -1,5 +1,6 @@
 ---
 title: "Un raycaster façon Wolfenstein3D en pur typescript"
+vite_modules: ["raycaster"]
 ---
 {% load jssg %}
 
@@ -34,5 +35,3 @@ Les déplacement utilisent les touches correspondant à "WASD" sur un clavier QW
         </tbody>
     </table>
 </div>
-
-{% vite_module 'raycaster' %}

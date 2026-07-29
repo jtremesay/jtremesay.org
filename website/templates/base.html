@@ -1,21 +1,25 @@
-<!DOCTYPE html>{% spaceless %}
+{% spaceless %}
+<!DOCTYPE html>
 
 {% load i18n %}
 {% load static %}
 {% load jssg %}
 
 {% get_current_language as LANGUAGE_CODE %}
-
-{% endspaceless %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% spaceless %}{{ site_name }}{% block page_title %}{% if object.title %} - {{ object.title }}{% endif %}{% endblock %}{% endspaceless %}</title>
+    <title>{{ site_name }}{% block page_title %}{% if object.title %} - {{ object.title }}{% endif %}{% endblock %}</title>
     <link rel="icon" type="image/png" sizes="32x32" href="{% static_url 'theme/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static_url 'theme/favicon-16x16.png' %}">
     <link rel="icon" type="image/x-icon" href="{% static_url 'theme/favicon.ico' %}">
     {% vite_hmr %}
+    {% block vite_modules %}
+      {% for module in vite_modules %}
+        {% vite_module module %}
+      {% endfor %}
+    {% endblock %}
   </head>
 
   <body>
@@ -30,10 +34,12 @@
           </ul>
       </nav>
     </header>
-    <main>{% block content %}{% endblock %}</main>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
     <footer>
       <p>
-          Copyright © 2023 - {% now "Y" %} Jonathan Tremesaygues.
+        Copyright © 2023 - {% now "Y" %} Jonathan Tremesaygues.
       </p>
 
       <p>
@@ -57,3 +63,4 @@
     </footer>
   </body>
 </html>
+{% endspaceless %}

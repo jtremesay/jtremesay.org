@@ -1,5 +1,6 @@
 ---
 title: "Images générés par ordinateur"
+vite_modules: ["cgi"]
 ---
 {% load jssg %}
 
@@ -18,5 +19,3 @@ Ici, un [triangle de Sierpinski](https://fr.wikipedia.org/wiki/Triangle_de_Sierp
         <rect width="100%" height="100%" fill="black" />
     </svg>
 </div>
-
-{% vite_module "cgi" %}

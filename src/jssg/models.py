@@ -28,6 +28,7 @@ class PageManager(models.Manager):
             url=page.url,
             defaults={
                 "title": page.title,
+                "vite_modules": page.vite_modules,
                 "body_md": page.body_md,
             },
         )
@@ -42,6 +43,7 @@ class Page(models.Model):
     url = models.URLField(unique=True)
     title = models.CharField(max_length=255)
     body_md = models.TextField()
+    vite_modules = models.JSONField(default=list, blank=True)
 
     def __str__(self) -> str:
         return self.url
@@ -58,12 +60,18 @@ class Page(models.Model):
     @classmethod
     def from_file(cls, path: Path) -> Self:
         content = frontmatter.load(path)
+        url = cls.url_from_path(path)
 
         try:
             title = cast(str, content.metadata["title"])
         except KeyError:
             raise ValueError(f"Missing 'title' in metadata of {path}")
 
-        url = cls.url_from_path(path)
+        try:
+            vite_modules = cast(list[str], content.metadata["vite_modules"])
+        except KeyError:
+            vite_modules = []
 
-        return cls(url=url, title=title, body_md=content.content)
+        return cls(
+            url=url, title=title, body_md=content.content, vite_modules=vite_modules
+        )
