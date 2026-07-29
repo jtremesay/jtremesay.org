@@ -49,33 +49,33 @@ function create_def_triangle_n(level: number): SVGElement {
 }
 
 export function main() {
-    document.addEventListener("DOMContentLoaded", () => {
-        for (const container of document.querySelectorAll(`.${NS}`)) {
-            const level_input = container.querySelector(`input.${NS}-level`) as HTMLInputElement
-            const level_min = parseInt(level_input.getAttribute("min") || "0")
-            const level_max = parseInt(level_input.getAttribute("max") || "10")
+    for (const container of document.querySelectorAll(`.${NS}`)) {
+        const level_input = container.querySelector(`input.${NS}-level`) as HTMLInputElement
+        const level_min = 0
+        const level_max = parseInt(level_input.getAttribute("max") || "10")
 
-            const svg = container.querySelector(`svg.${NS}-svg`) as SVGElement
-            svg.setAttribute("viewBox", "0 0 1 1")
-            const defs = svg.querySelector("defs") || document.createElementNS(SVG_NS, "defs")
-            if (!defs.parentNode) {
-                svg.appendChild(defs)
-            }
-
-            for (let level = level_min; level <= level_max; level++) {
-                const def = create_def_triangle_n(level)
-                def.setAttribute("id", `${NS}-def_triangle_${level}`)
-                defs.appendChild(def)
-            }
-
-            const top = document.createElementNS(SVG_NS, "use")
-            top.setAttribute("href", `#${NS}-def_triangle_${parseInt(level_input.value)}`)
-            top.setAttribute("y", (.1).toString())
-            svg.appendChild(top)
-
-            level_input.addEventListener("input", () => {
-                top.setAttribute("href", `#${NS}-def_triangle_${parseInt(level_input.value)}`)
-            })
+        const svg = container.querySelector(`svg.${NS}-svg`) as SVGElement
+        svg.setAttribute("viewBox", "0 0 1 1")
+        const defs = svg.querySelector("defs") || document.createElementNS(SVG_NS, "defs")
+        if (!defs.parentNode) {
+            svg.appendChild(defs)
         }
-    })
+
+        const frag = document.createDocumentFragment()
+        for (let level = level_min; level <= level_max; level++) {
+            const def = create_def_triangle_n(level)
+            def.setAttribute("id", `${NS}-def_triangle_${level}`)
+            frag.appendChild(def)
+        }
+        defs.appendChild(frag)
+
+        const top = document.createElementNS(SVG_NS, "use")
+        top.setAttribute("href", `#${NS}-def_triangle_${parseInt(level_input.value)}`)
+        top.setAttribute("y", (.1).toString())
+        svg.appendChild(top)
+
+        level_input.addEventListener("input", () => {
+            top.setAttribute("href", `#${NS}-def_triangle_${parseInt(level_input.value)}`)
+        })
+    }
 }
