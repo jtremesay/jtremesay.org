@@ -14,10 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from argparse import ArgumentParser
+from pathlib import Path
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
+from watchfiles import Change, watch
 
 from jssg.models import Page
 
@@ -32,8 +34,14 @@ class Command(BaseCommand):
             action="store_true",
             help="Clear the database before importing.",
         )
+        parser.add_argument(
+            "-l",
+            "--live",
+            action="store_true",
+            help="Import the website content in live mode.",
+        )
 
-    def handle(self, *args, clear: bool = False, update: bool = False, **options):
+    def handle(self, *args, clear: bool = False, live: bool = False, **options):
         if clear:
             self.stdout.write("Clearing the database...")
             c = Page.objects.all().delete()
@@ -46,3 +54,26 @@ class Command(BaseCommand):
         for page_entry in tqdm(sorted(settings.JSSG_PAGES_DIR.glob("**.md"))):
             tqdm.write(f"Importing {page_entry}")
             Page.objects.update_or_create_from_file(page_entry)
+
+        if live:
+            for changes in tqdm(
+                watch(
+                    settings.JSSG_PAGES_DIR,
+                    watch_filter=lambda change, path: path.endswith(".md"),
+                )
+            ):
+                for change, path in changes:
+                    path = Path(path)
+                    print(f"Detected change: {change}, path: {path}")
+                    match change:
+                        case Change.added | Change.modified:
+                            tqdm.write(f"Importing {path}")
+                            try:
+                                Page.objects.update_or_create_from_file(path)
+                            except Exception as e:
+                                tqdm.write(f"Failed to import {path}: {e}")
+                        case Change.deleted:
+                            tqdm.write(f"Deleting {path}")
+                            Page.objects.delete_from_file(path)
+                        case _:
+                            tqdm.write(f"Unknown change: {changes}")

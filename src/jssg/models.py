@@ -21,56 +21,39 @@ from django.conf import settings
 from django.db import models
 
 
-class ContentManager(models.Manager):
-    def update_or_create_from_file(self, path: Path) -> tuple[Self, bool]:
-        raise NotImplementedError()
-
-
-class Content(models.Model):
-    class Meta:
-        abstract = True
-
-    objects = ContentManager()
-
-    metadata = models.JSONField()
-    body_md = models.TextField()
-
-    @classmethod
-    def from_file(cls, path: Path) -> Self:
-        content = frontmatter.load(path)
-
-        return cls(metadata=content.metadata, body_md=content.content)
-
-
-class PageManager(ContentManager):
-    def create_from_file(self, path: Path) -> Self:
-        page = Page.from_file(path)
-        return Page.objects.create(
-            url=page.url,
-            title=page.title,
-            metadata=page.metadata,
-            body_md=page.body_md,
-        )
-
-    def update_or_create_from_file(self, path: Path) -> tuple[Self, bool]:
-        page = Page.from_file(path)
-        return Page.objects.update_or_create(
+class PageManager(models.Manager):
+    def update_or_create_from_file(self, path: Path) -> tuple[Page, bool]:
+        page = self.model.from_file(path)
+        return self.model.objects.update_or_create(
             url=page.url,
             defaults={
                 "title": page.title,
-                "metadata": page.metadata,
                 "body_md": page.body_md,
             },
         )
 
+    def delete_from_file(self, path: Path) -> None:
+        url = self.model.url_from_path(path)
+        self.model.objects.filter(url=url).delete()
 
-class Page(Content):
+
+class Page(models.Model):
     objects = PageManager()
     url = models.URLField(unique=True)
     title = models.CharField(max_length=255)
+    body_md = models.TextField()
 
     def __str__(self) -> str:
         return self.url
+
+    @classmethod
+    def url_from_path(cls, path: Path) -> str:
+        try:
+            rel_path = path.relative_to(settings.JSSG_PAGES_DIR)
+        except ValueError:
+            raise ValueError(f"Path {path} is not under '{settings.JSSG_PAGES_DIR}'")
+
+        return str(rel_path.with_suffix(".html"))
 
     @classmethod
     def from_file(cls, path: Path) -> Self:
@@ -81,12 +64,6 @@ class Page(Content):
         except KeyError:
             raise ValueError(f"Missing 'title' in metadata of {path}")
 
-        try:
-            rel_path = path.relative_to(settings.JSSG_PAGES_DIR)
-        except ValueError:
-            raise ValueError(f"Path {path} is not under '{settings.JSSG_PAGES_DIR}'")
-        url = str(rel_path.with_suffix(".html"))
+        url = cls.url_from_path(path)
 
-        return cls(
-            metadata=content.metadata, body_md=content.content, title=title, url=url
-        )
+        return cls(url=url, title=title, body_md=content.content)
