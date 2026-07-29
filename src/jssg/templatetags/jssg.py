@@ -19,6 +19,7 @@ from django.contrib.staticfiles import finders
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.html import format_html, mark_safe
 
 from jssg.models import Page
 
@@ -72,7 +73,29 @@ def static_url(path: str) -> str:
     return url
 
 
-@register.filter
+@register.simple_tag
+def vite_hmr() -> str:
+    """
+    Returns the URL of a Vite asset given its path.
+    """
+    return mark_safe(
+        '<script type="module" src="http://localhost:5173/@vite/client"></script>'
+    )
+
+
+@register.simple_tag
+@stringfilter
+def vite_module(path: str) -> str:
+    """
+    Returns the URL of a Vite module given its path.
+    """
+    return format_html(
+        '<script type="module" src="http://localhost:5173/website/front/{}"></script>',
+        path,
+    )
+
+
+@register.filter(is_safe=True)
 @stringfilter
 def content(value: str) -> str:
     """
@@ -80,4 +103,5 @@ def content(value: str) -> str:
     """
     t = template.Template(value)
     c = template.Context()
+
     return t.render(c)
