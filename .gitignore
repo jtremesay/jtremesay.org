@@ -1,6 +1,12 @@
 # Python stuff
 __pycache__/
 
+# node_modules
+node_modules/
+
 # Sqlite database
 *.sqlite3
 *.sqlite3-journal
+
+# Generated files
+dist/
