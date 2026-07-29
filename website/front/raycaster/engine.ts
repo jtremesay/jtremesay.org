@@ -103,7 +103,7 @@ export class Raycaster {
     }
 
     setup_ui() {
-        console.log("setup ui")
+        //console.log("setup ui")
         let self = this;
         window.addEventListener("keydown", function (event) {
             //console.log(`key down, code: ${event.code}`);
