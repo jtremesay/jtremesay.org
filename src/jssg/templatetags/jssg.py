@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django import template
+from django.urls import reverse
 
 from jssg.models import Page
 
@@ -25,7 +26,9 @@ def page_url(url: str) -> str:
     """
     Returns the URL of a page given its title.
     """
-    if not Page.objects.filter(url=url).exists():
+    try:
+        page = Page.objects.get(url=url)
+    except Page.DoesNotExist:
         raise ValueError(f"Page with url '{url}' does not exist.")
 
-    return url
+    return reverse("page", args=[page.url])
