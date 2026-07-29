@@ -35,7 +35,6 @@ from django.urls import path
 
 from jssg import views
 
-app_name = "jssg"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("<str:url>", views.PageDetailView.as_view(), name="page"),
