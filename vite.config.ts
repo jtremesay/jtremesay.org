@@ -1,17 +1,28 @@
 import { defineConfig } from 'vite'
-import { Glob, globSync } from 'glob';
+import { globSync } from 'tinyglobby';
+
+const BASE_DIR = "website/front/";
+
 
 export default defineConfig({
     publicDir: false,
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: globSync('website/front/**/main.ts', { absolute: true }).reduce((acc: Record<string, string>, file: string) => {
-                const name = file.split('/').slice(-2, -1)[0];
-                acc[name] = file;
-                return acc;
-            }, {})
+    resolve: {
+        alias: {
+            '@': BASE_DIR,
         },
-        outDir: 'dist/static/front/',
+    },
+    build: {
+        assetsDir: '',
+        manifest: true,
+        outDir: 'dist/static/front',
+        rollupOptions: {
+            input: Object.fromEntries(
+                globSync(`${BASE_DIR}**/main.ts`).map((file) => [
+                    file.replace(BASE_DIR, '').replace(/\.ts$/, ''), file
+                ]
+                ),
+            ),
+        },
+        sourcemap: true,
     }
 }); 
