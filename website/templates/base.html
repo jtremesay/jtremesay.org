@@ -12,6 +12,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% spaceless %}{{ site_name }}{% block page_title %}{% if object.title %} - {{ object.title }}{% endif %}{% endblock %}{% endspaceless %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static_url 'theme/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static_url 'theme/favicon-16x16.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static_url 'theme/favicon.ico' %}">
   </head>
 
   <body>
