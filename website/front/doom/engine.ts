@@ -80,23 +80,13 @@ export class Engine {
     }
 
     start() {
-        let last_time = performance.now()
         let step = () => {
-            let now = performance.now()
-            let dt = (now - last_time) / 1000
-            last_time = now
-
-            this.update(dt)
             this.render()
 
             requestAnimationFrame(step)
         }
         requestAnimationFrame(step)
     }
-
-    update(dt: number) {
-    }
-
     render() {
         this.data.view2D.render()
         this.data.view3D.render()
