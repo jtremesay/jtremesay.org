@@ -10,7 +10,7 @@ title: "Bienvenue sur mon site!"
 - {% page_link_md "tris_animes.html" %}
 - {% page_link_md "pi_montecarlo.html" %}
 - {% page_link_md "scadaplayer.html" "un outil pour visualiser les données issues d'une éolienne" %}
-- [Crankshaft](#) : Simulation de systèmes vilebrequin / bielle / piston
+- {% page_link_md "crankshaft.html" "Crankshaft" %} : Simulation de systèmes vilebrequin / bielle / piston
 - [Doom](#) : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
 - [free flow](#) : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
 - [particles](#) : un système de particules 2D
