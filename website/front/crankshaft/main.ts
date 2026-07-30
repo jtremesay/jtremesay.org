@@ -22,7 +22,6 @@
 import 'vite/modulepreload-polyfill';
 
 import * as d3 from "d3"
-import { Engine, EngineUpdater } from "../jengine/engine";
 
 
 const PIN_RADIUS = 10
@@ -99,32 +98,34 @@ class CrankShaftData {
     }
 }
 
-class CrankShaftUpdater implements EngineUpdater<CrankShaftData> {
-    update(data: CrankShaftData | null, dt: DOMHighResTimeStamp): CrankShaftData | null {
-        if (data === null) {
-            return null
-        }
+class Engine {
+    data: CrankShaftData
 
-        data.clock += dt
+    constructor(data: CrankShaftData) {
+        this.data = data
+    }
 
-        let theta = data.clock
+    update(dt: DOMHighResTimeStamp): CrankShaftData | null {
+        this.data.clock += dt
 
-        let tdc_y = data.crankshaft_radius + data.rod_length
-        let piston_y = -(data.crankshaft_radius * Math.cos(theta) + Math.sqrt(Math.pow(data.rod_length, 2) - Math.pow(data.crankshaft_radius, 2) * Math.pow(Math.sin(theta), 2)))
+        let theta = this.data.clock
+
+        let tdc_y = this.data.crankshaft_radius + this.data.rod_length
+        let piston_y = -(this.data.crankshaft_radius * Math.cos(theta) + Math.sqrt(Math.pow(this.data.rod_length, 2) - Math.pow(this.data.crankshaft_radius, 2) * Math.pow(Math.sin(theta), 2)))
         let piston_yrel = tdc_y + piston_y
-        let cylinder_vol = (PISTON_RADIUS * PISTON_RADIUS * Math.PI) * (data.crankshaft_radius * 2)
-        let cylinder_ratio = piston_yrel / (2 * data.crankshaft_radius)
-        let theta_rod = -Math.asin(Math.sin(theta) * data.crankshaft_radius / data.rod_length)
+        let cylinder_vol = (PISTON_RADIUS * PISTON_RADIUS * Math.PI) * (this.data.crankshaft_radius * 2)
+        let cylinder_ratio = piston_yrel / (2 * this.data.crankshaft_radius)
+        let theta_rod = -Math.asin(Math.sin(theta) * this.data.crankshaft_radius / this.data.rod_length)
 
         // Infos
-        d3.select(data.text_infos_node).selectAll("text")
+        d3.select(this.data.text_infos_node).selectAll("text")
             .data([
-                `Crankshaft radius: ${data.crankshaft_radius} units`,
+                `Crankshaft radius: ${this.data.crankshaft_radius} units`,
                 `Crankshaft theta: ${(theta % (2 * Math.PI)).toFixed(1)} rad`,
                 `Crankshaft ang. vel.: 60 RPM`,
-                `Crankshaft lin. vel.: ${(2 * data.crankshaft_radius * Math.PI).toFixed(1)} units.s⁻¹`,
-                `Rod length: ${data.rod_length} units`,
-                `Rod / Crankshaft ratio: ${(data.rod_length / data.crankshaft_radius).toFixed(2)}`,
+                `Crankshaft lin. vel.: ${(2 * this.data.crankshaft_radius * Math.PI).toFixed(1)} units.s⁻¹`,
+                `Rod length: ${this.data.rod_length} units`,
+                `Rod / Crankshaft ratio: ${(this.data.rod_length / this.data.crankshaft_radius).toFixed(2)}`,
                 `Rod theta: ${(theta_rod).toFixed(1)} rad`,
                 `Piston radius: ${PISTON_RADIUS} units`,
                 `Piston height: ${PISTON_HEIGHT} units`,
@@ -137,29 +138,44 @@ class CrankShaftUpdater implements EngineUpdater<CrankShaftData> {
             .text((d) => d)
 
         // Piston
-        d3.select(data.piston_node)
+        d3.select(this.data.piston_node)
             .attr("transform", [
                 `translate(0, ${piston_y})`,
             ])
 
         // Rod
-        d3.select(data.rod_node)
+        d3.select(this.data.rod_node)
             .attr("transform", [
                 `translate(0, ${piston_y})`,
                 `rotate(${theta_rod * 180 / Math.PI})`
             ])
 
         // Crankshaft pin
-        d3.select(data.crankshaft_pin_node)
+        d3.select(this.data.crankshaft_pin_node)
             .attr("transform", [
-                `translate(0, ${-data.crankshaft_radius})`,
-                `rotate(${theta * 180 / Math.PI}, 0, ${data.crankshaft_radius})`])
+                `translate(0, ${-this.data.crankshaft_radius})`,
+                `rotate(${theta * 180 / Math.PI}, 0, ${this.data.crankshaft_radius})`])
 
         // Piston pin
-        d3.select(data.piston_pin_node)
+        d3.select(this.data.piston_pin_node)
             .attr("transform", [`translate(0, ${piston_y})`])
 
         return null
+    }
+
+    start() {
+        let last_time: DOMHighResTimeStamp | null = null
+
+        const step = (time: DOMHighResTimeStamp) => {
+            if (last_time !== null) {
+                let dt = (time - last_time) / 1000
+                this.update(dt)
+            }
+            last_time = time
+            requestAnimationFrame(step)
+        }
+
+        requestAnimationFrame(step)
     }
 }
 
@@ -198,9 +214,7 @@ d3.select("#app").call(function ($app) {
                             .data(crankshaft_radiuses)
                             .join("td").each(function (crankshaft_radius) {
                                 const data = new CrankShaftData(crankshaft_radius, crankshaft_radius * rod_scale, this)
-                                const updater = new CrankShaftUpdater()
-                                const renderer = null
-                                new Engine(updater, renderer, data).start()
+                                new Engine(data).start()
                             })
                     })
                 })
