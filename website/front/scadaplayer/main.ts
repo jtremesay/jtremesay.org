@@ -18,6 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'vite/modulepreload-polyfill';
+
 import { ScadaPlayerData, ScadaPlayerEngine } from "./engine"
 import { parse_scada } from "./parser"
 
