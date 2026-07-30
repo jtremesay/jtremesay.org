@@ -1,6 +1,6 @@
 ---
-title: "Pi Monte Carlo"
-vite_modules: ["pi_montecarlo"]
+title: "Calculer Pi au casino"
+vite_modules: ["pimontecarlo"]
 ---
 Il est possible d'approximer Pi en tirant au hasard sur une cible.
 
@@ -13,7 +13,6 @@ En faisant le rapport du nombre de points dans le disque au nombre de tirages, o
 Représentation du calcul de la valeur de π par rapport du nombre de points aléatoires étant contenus dans un quart de cercle, l'ensemble des possibles étant un carré de côté R :
 
 
-{% vite_asset 'jtremesay/front/main/pimontecarlo.ts' %}
 <div id="app">
     <label for="samples_count">
         Samples count:
@@ -32,7 +31,6 @@ Représentation du calcul de la valeur de π par rapport du nombre de points al�
 
         <input type="number" name="ratio" id="ratio">
     </label>
-
 
     <canvas name="canvas" width="400" height=400></canvas>
 </div>

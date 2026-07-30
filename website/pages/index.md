@@ -8,7 +8,7 @@ title: "Bienvenue sur mon site!"
 - {% page_link_md "cgi.html" %}
 - {% page_link_md "raycaster.html" %}
 - {% page_link_md "tris_animes.html" %}
-- [Calculer Pi au casino](#)
+- {% page_link_md "pi_montecarlo.html" %}
 - [Scada player](#) : un outil pour visualiser les données issues d'une éolienne
 - [Crankshaft](#) : Simulation de systèmes vilebrequin / bielle / piston
 - [Doom](#) : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
