@@ -25,4 +25,6 @@ def markdown(value: str) -> str:
     """
     Converts Markdown text to HTML.
     """
-    return SafeString(md.markdown(value))
+    return SafeString(
+        md.markdown(value, extensions=["extra", "codehilite", "toc", "tables"])
+    )

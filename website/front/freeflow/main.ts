@@ -17,8 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import './style.css'
+import 'vite/modulepreload-polyfill';
 import * as d3 from 'd3';
 const tile_size_px = 128;
 

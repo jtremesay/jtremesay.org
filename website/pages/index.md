@@ -10,12 +10,12 @@ title: "Bienvenue sur mon site!"
 - {% page_link_md "tris_animes.html" %}
 - {% page_link_md "pi_montecarlo.html" %}
 - {% page_link_md "scadaplayer.html" "un outil pour visualiser les données issues d'une éolienne" %}
-- {% page_link_md "crankshaft.html" "Crankshaft" %} : Simulation de systèmes vilebrequin / bielle / piston
-- {% page_link_md "doom.html" "Doom" %} : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
-- {% page_link_md "freeflow.html" "Freeflow" %} : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
-- {% page_link_md "particles.html" "Particules dans un champs vectoriel" %} : un système de particules 2D
-- [textnodes](#) : Une astuce simple pour transformer un texte (mais pas que) en particules animables
-- [brainfuck](#) : Explorations de la théorie des langages et des compilateurs avec brainfuckS
+- {% page_link_md "crankshaft.html" %} : Simulation de systèmes vilebrequin / bielle / piston
+- {% page_link_md "doom.html" %} : parce que si à 40 ans t'as pas fait ton propre moteur pour Doom, t'as un peu raté ta vie de dev…
+- {% page_link_md "freeflow.html" %} : un clone de [Flow Free®](https://www.bigduckgames.com/flowfree)
+- {% page_link_md "particles.html" %} : un système de particules 2D
+- {% page_link_md "textnodes.html" %} : Une astuce simple pour transformer un texte (mais pas que) en particules animables
+- {% page_link_md "brainfuck.html" %} : Explorations de la théorie des langages et des compilateurs avec brainfuck
 
 ## Projets
 
