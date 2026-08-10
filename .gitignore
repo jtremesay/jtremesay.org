@@ -10,3 +10,6 @@ node_modules/
 
 # Generated files
 dist/
+
+# Overmind
+.overmind.sock
