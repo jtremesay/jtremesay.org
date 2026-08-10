@@ -15,6 +15,11 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static_url 'theme/favicon-16x16.png' %}">
     <link rel="icon" type="image/x-icon" href="{% static_url 'theme/favicon.ico' %}">
     <link rel="stylesheet" href="{% static_url 'pygments/monokai.css' %}">
+    {% block css %}
+      {% for css_file in css %}
+        <link rel="stylesheet" href="{% static_url css_file %}">
+      {% endfor %}
+    {% endblock %}
 
     {% vite_hmr %}
     {% block vite_modules %}

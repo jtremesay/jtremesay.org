@@ -1,10 +1,8 @@
 ---
-title: Brainfuck
+title: "Brainfuck"
+css: ["brainfuck/style.css"]
 vite_modules: ["brainfuck"]
 ---
-{% load jssg %}
-<link rel="stylesheet" href="{% static_url 'brainfuck/style.css' %}">
-
 Exploration du langage Brainfuck.
 
 ## Introduction

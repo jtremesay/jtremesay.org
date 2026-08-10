@@ -28,6 +28,7 @@ class PageManager(models.Manager):
             url=page.url,
             defaults={
                 "title": page.title,
+                "css": page.css,
                 "vite_modules": page.vite_modules,
                 "body_md": page.body_md,
             },
@@ -43,6 +44,8 @@ class Page(models.Model):
     url = models.URLField(unique=True)
     title = models.CharField(max_length=255)
     body_md = models.TextField()
+
+    css = models.JSONField(default=list, blank=True)
     vite_modules = models.JSONField(default=list, blank=True)
 
     def __str__(self) -> str:
@@ -68,10 +71,19 @@ class Page(models.Model):
             raise ValueError(f"Missing 'title' in metadata of {path}")
 
         try:
+            css = cast(list[str], content.metadata["css"])
+        except KeyError:
+            css = []
+
+        try:
             vite_modules = cast(list[str], content.metadata["vite_modules"])
         except KeyError:
             vite_modules = []
 
         return cls(
-            url=url, title=title, body_md=content.content, vite_modules=vite_modules
+            url=url,
+            title=title,
+            body_md=content.content,
+            css=css,
+            vite_modules=vite_modules,
         )

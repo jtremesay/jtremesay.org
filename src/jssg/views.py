@@ -27,6 +27,7 @@ class PageDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["css"] = self.object.css
         context["vite_modules"] = self.object.vite_modules
         context["site_name"] = settings.JSSG_SITE_NAME
         context["jssg_repo"] = settings.JSSG_REPO
